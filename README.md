@@ -6,23 +6,27 @@
 ![PyPI downloads](https://img.shields.io/pypi/dm/jupyterlab-parquet-viewer-extension?label=PyPI%20downloads)
 ![JL4 Ready](https://img.shields.io/badge/Jupyterlab%204-ready-blue)
 
-JupyterLab extension for browsing Parquet files with filtering, sorting, and search capabilities. Opens Parquet files directly in JupyterLab without writing code, providing spreadsheet-like interaction for columnar data.
+View and browse Parquet files directly in JupyterLab. Double-click any .parquet file to open it in a simple, spreadsheet-like table view - no code required. Navigate through your data, inspect values, and explore the structure of your columnar data files.
 
 ![Parquet Viewer](.resources/screenshot.png)
 
 ## Features
 
-- Progressive loading (500 rows initially, expands on scroll) for responsive performance with large files
+**Core viewing and navigation:**
+- Simple table display showing your Parquet data in familiar spreadsheet format
+- Column headers with field names and simplified datatype indicators
+- Progressive loading - starts with 500 rows, automatically loads more as you scroll
+- Automatic column width optimization for readability
+- File statistics (column count, row count, file size) at a glance
+- Handles large files efficiently with server-side processing
+
+**Advanced filtering and sorting:**
 - Column sorting with three-state toggle (ascending, descending, off)
 - Per-column filtering with substring or regex pattern matching
 - Case-insensitive search option
 - Numerical filters supporting comparison operators (`>`, `<`, `>=`, `<=`, `=`)
-- File statistics display (column count, row count, file size)
 - Clear filters functionality to reset all active filters
-- Column headers showing field names with simplified datatype indicators
-- Automatic column width optimization
-- Server-side processing maintains performance with large datasets
-- Read-only interface focused on data exploration
+- Multiple filters work together to narrow down results
 
 ## Installation
 

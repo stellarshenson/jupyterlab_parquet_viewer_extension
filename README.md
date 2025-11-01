@@ -1,4 +1,4 @@
-# jupyterlab_basic_parquet_viewer_extension
+# jupyterlab_parquet_viewer_extension
 
 [![Github Actions Status](https://github.com/stellarshenson/jupyterlab_parquet_viewer_extension.git/workflows/Build/badge.svg)](https://github.com/stellarshenson/jupyterlab_parquet_viewer_extension.git/actions/workflows/build.yml)
 
@@ -27,13 +27,13 @@ The interface design takes inspiration from VS Code's Parquet Viewer while follo
 The extension requires JupyterLab 4.0.0 or higher. Install using pip, which handles both the frontend and server components automatically:
 
 ```bash
-pip install jupyterlab_basic_parquet_viewer_extension
+pip install jupyterlab_parquet_viewer_extension
 ```
 
 To remove the extension later, use standard pip uninstall:
 
 ```bash
-pip uninstall jupyterlab_basic_parquet_viewer_extension
+pip uninstall jupyterlab_parquet_viewer_extension
 ```
 
 ## Troubleshooting
@@ -50,7 +50,7 @@ If you don't see the extension interface at all despite successful installation,
 jupyter labextension list
 ```
 
-Both commands should show `jupyterlab_basic_parquet_viewer_extension` as enabled. If either component is missing or disabled, reinstalling typically resolves the issue.
+Both commands should show `jupyterlab_parquet_viewer_extension` as enabled. If either component is missing or disabled, reinstalling typically resolves the issue.
 
 ## Development Setup
 
@@ -68,7 +68,7 @@ Next, establish the development links. The frontend requires explicit linking be
 
 ```bash
 jupyter labextension develop . --overwrite
-jupyter server extension enable jupyterlab_basic_parquet_viewer_extension
+jupyter server extension enable jupyterlab_parquet_viewer_extension
 ```
 
 After making changes to TypeScript source files, rebuild the extension with `jlpm build`. This step is required after every code change, unlike the setup commands above which run only once.
@@ -88,11 +88,11 @@ jupyter lab build --minimize=False
 Development mode creates symlinks that persist after uninstalling the Python package. First disable and uninstall the extension components:
 
 ```bash
-jupyter server extension disable jupyterlab_basic_parquet_viewer_extension
-pip uninstall jupyterlab_basic_parquet_viewer_extension
+jupyter server extension disable jupyterlab_parquet_viewer_extension
+pip uninstall jupyterlab_parquet_viewer_extension
 ```
 
-Then locate and remove the frontend symlink. Run `jupyter labextension list` to find your `labextensions` directory, then delete the `jupyterlab_basic_parquet_viewer_extension` symlink within it.
+Then locate and remove the frontend symlink. Run `jupyter labextension list` to find your `labextensions` directory, then delete the `jupyterlab_parquet_viewer_extension` symlink within it.
 
 ## Testing
 
@@ -103,7 +103,7 @@ The extension employs a three-tier testing strategy covering Python backend code
 ```bash
 pip install -e ".[test]"
 jupyter labextension develop . --overwrite
-pytest -vv -r ap --cov jupyterlab_basic_parquet_viewer_extension
+pytest -vv -r ap --cov jupyterlab_parquet_viewer_extension
 ```
 
 Note that reinstalling the Python package requires re-linking the frontend extension, hence the second command above.

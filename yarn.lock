@@ -6809,9 +6809,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jupyterlab_basic_parquet_viewer_extension@workspace:.":
+"jupyterlab_parquet_viewer_extension@workspace:.":
   version: 0.0.0-use.local
-  resolution: "jupyterlab_basic_parquet_viewer_extension@workspace:."
+  resolution: "jupyterlab_parquet_viewer_extension@workspace:."
   dependencies:
     "@jupyterlab/application": ^4.0.0
     "@jupyterlab/apputils": ^4.0.0

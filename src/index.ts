@@ -32,17 +32,17 @@ class ParquetWidgetFactory extends ABCWidgetFactory<
 }
 
 /**
- * Initialization data for the jupyterlab_basic_parquet_viewer_extension extension.
+ * Initialization data for the jupyterlab_parquet_viewer_extension extension.
  */
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'jupyterlab_basic_parquet_viewer_extension:plugin',
+  id: 'jupyterlab_parquet_viewer_extension:plugin',
   description:
     'Jupyterlab extension to allow simple browsing of the parquet files with basic data filtering capabilities',
   autoStart: true,
   requires: [],
   activate: (app: JupyterFrontEnd) => {
     console.log(
-      'JupyterLab extension jupyterlab_basic_parquet_viewer_extension is activated!'
+      'JupyterLab extension jupyterlab_parquet_viewer_extension is activated!'
     );
 
     const { docRegistry } = app;

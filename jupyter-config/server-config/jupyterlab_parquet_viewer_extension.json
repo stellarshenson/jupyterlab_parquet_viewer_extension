@@ -1,7 +1,7 @@
 {
   "ServerApp": {
     "jpserver_extensions": {
-      "jupyterlab_basic_parquet_viewer_extension": true
+      "jupyterlab_parquet_viewer_extension": true
     }
   }
 }

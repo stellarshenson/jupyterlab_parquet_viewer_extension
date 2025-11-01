@@ -1,5 +1,5 @@
 {
-    "name": "jupyterlab_basic_parquet_viewer_extension",
+    "name": "jupyterlab_parquet_viewer_extension",
     "version": "0.8.2",
     "description": "Jupyterlab extension to allow simple browsing of the parquet files with basic data filtering capabilities",
     "keywords": [
@@ -38,7 +38,7 @@
         "clean": "jlpm clean:lib",
         "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
         "clean:lintcache": "rimraf .eslintcache .stylelintcache",
-        "clean:labextension": "rimraf jupyterlab_basic_parquet_viewer_extension/labextension jupyterlab_basic_parquet_viewer_extension/_version.py",
+        "clean:labextension": "rimraf jupyterlab_parquet_viewer_extension/labextension jupyterlab_parquet_viewer_extension/_version.py",
         "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
         "eslint": "jlpm eslint:check --fix",
         "eslint:check": "eslint . --cache --ext .ts,.tsx",
@@ -106,12 +106,12 @@
                     "pip"
                 ],
                 "base": {
-                    "name": "jupyterlab_basic_parquet_viewer_extension"
+                    "name": "jupyterlab_parquet_viewer_extension"
                 }
             }
         },
         "extension": true,
-        "outputDir": "jupyterlab_basic_parquet_viewer_extension/labextension"
+        "outputDir": "jupyterlab_parquet_viewer_extension/labextension"
     },
     "eslintIgnore": [
         "node_modules",

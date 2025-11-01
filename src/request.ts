@@ -17,7 +17,7 @@ export async function requestAPI<T>(
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    'jupyterlab-basic-parquet-viewer-extension', // our server extension's API namespace
+    'jupyterlab-parquet-viewer-extension', // our server extension's API namespace
     endPoint
   );
 

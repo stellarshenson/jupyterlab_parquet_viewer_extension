@@ -129,7 +129,7 @@ __webpack_require__.r(__webpack_exports__);
 async function requestAPI(endPoint = '', init = {}) {
     // Make request to Jupyter API
     const settings = _jupyterlab_services__WEBPACK_IMPORTED_MODULE_1__.ServerConnection.makeSettings();
-    const requestUrl = _jupyterlab_coreutils__WEBPACK_IMPORTED_MODULE_0__.URLExt.join(settings.baseUrl, 'jupyterlab-basic-parquet-viewer-extension', // our server extension's API namespace
+    const requestUrl = _jupyterlab_coreutils__WEBPACK_IMPORTED_MODULE_0__.URLExt.join(settings.baseUrl, 'jupyterlab-parquet-viewer-extension', // our server extension's API namespace
     endPoint);
     let response;
     try {
@@ -439,4 +439,4 @@ class ParquetViewer extends _lumino_widgets__WEBPACK_IMPORTED_MODULE_0__.Widget 
 /***/ })
 
 }]);
-//# sourceMappingURL=lib_index_js.baebb87d80b5f82717bb.js.map
+//# sourceMappingURL=lib_index_js.f1daa98037cdb82620ec.js.map

@@ -705,7 +705,7 @@
             },
             "rimraf": {},
             "jupyterlab_parquet_viewer_extension": {
-              "version": "0.8.2",
+              "version": "0.8.3",
               "singleton": true,
               "import": "/home/lab/workspace/private/jupyterlab/jupyterlab_basic_parquet_viewer_extension/lib/index.js"
             }

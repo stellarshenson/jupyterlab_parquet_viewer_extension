@@ -111,6 +111,8 @@ class ParquetDataHandler(APIHandler):
             filters = input_data.get('filters', {})
             sort_by = input_data.get('sortBy', None)
             sort_order = input_data.get('sortOrder', 'asc')
+            case_insensitive = input_data.get('caseInsensitive', False)
+            use_regex = input_data.get('useRegex', False)
 
             if not file_path:
                 self.set_status(400)
@@ -159,10 +161,22 @@ class ParquetDataHandler(APIHandler):
                     column = table.column(col_name)
 
                     if filter_type == 'text':
-                        # Substring matching for text columns
-                        filter_expressions.append(
-                            pc.match_substring(column, filter_value)
-                        )
+                        if use_regex:
+                            # Use regex matching when enabled
+                            try:
+                                filter_expressions.append(
+                                    pc.match_substring_regex(column, filter_value, ignore_case=case_insensitive)
+                                )
+                            except Exception:
+                                # Fall back to simple substring matching if regex is invalid
+                                filter_expressions.append(
+                                    pc.match_substring(column, filter_value, ignore_case=case_insensitive)
+                                )
+                        else:
+                            # Use simple substring matching by default
+                            filter_expressions.append(
+                                pc.match_substring(column, filter_value, ignore_case=case_insensitive)
+                            )
                     elif filter_type == 'number':
                         # Numerical comparison
                         operator = filter_spec.get('operator', '=')

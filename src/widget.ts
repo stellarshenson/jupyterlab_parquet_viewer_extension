@@ -34,6 +34,8 @@ export class ParquetViewer extends Widget {
   private _sortBy: string | null = null;
   private _sortOrder: 'asc' | 'desc' = 'asc';
   private _fileSize = 0;
+  private _caseInsensitive = false;
+  private _useRegex = false;
 
   private _tableContainer: HTMLDivElement;
   private _table: HTMLTableElement;
@@ -44,6 +46,8 @@ export class ParquetViewer extends Widget {
   private _statusBar: HTMLDivElement;
   private _statusLeft: HTMLDivElement;
   private _statusRight: HTMLDivElement;
+  private _caseInsensitiveCheckbox: HTMLInputElement;
+  private _regexCheckbox: HTMLInputElement;
 
   constructor(filePath: string) {
     super();
@@ -86,10 +90,54 @@ export class ParquetViewer extends Widget {
     this._statusLeft = document.createElement('div');
     this._statusLeft.className = 'jp-ParquetViewer-statusLeft';
 
+    // Create middle section with case-insensitive checkbox
+    const statusMiddle = document.createElement('div');
+    statusMiddle.className = 'jp-ParquetViewer-statusMiddle';
+
+    const checkboxLabel = document.createElement('label');
+    checkboxLabel.className = 'jp-ParquetViewer-caseInsensitiveLabel';
+
+    this._caseInsensitiveCheckbox = document.createElement('input');
+    this._caseInsensitiveCheckbox.type = 'checkbox';
+    this._caseInsensitiveCheckbox.className = 'jp-ParquetViewer-caseInsensitiveCheckbox';
+    this._caseInsensitiveCheckbox.checked = this._caseInsensitive;
+    this._caseInsensitiveCheckbox.addEventListener('change', () => {
+      this._caseInsensitive = this._caseInsensitiveCheckbox.checked;
+      this._loadData(true);
+    });
+
+    const checkboxText = document.createElement('span');
+    checkboxText.textContent = ' Case insensitive';
+
+    checkboxLabel.appendChild(this._caseInsensitiveCheckbox);
+    checkboxLabel.appendChild(checkboxText);
+    statusMiddle.appendChild(checkboxLabel);
+
+    // Create regex checkbox
+    const regexLabel = document.createElement('label');
+    regexLabel.className = 'jp-ParquetViewer-regexLabel';
+
+    this._regexCheckbox = document.createElement('input');
+    this._regexCheckbox.type = 'checkbox';
+    this._regexCheckbox.className = 'jp-ParquetViewer-regexCheckbox';
+    this._regexCheckbox.checked = this._useRegex;
+    this._regexCheckbox.addEventListener('change', () => {
+      this._useRegex = this._regexCheckbox.checked;
+      this._loadData(true);
+    });
+
+    const regexText = document.createElement('span');
+    regexText.textContent = ' Use regex';
+
+    regexLabel.appendChild(this._regexCheckbox);
+    regexLabel.appendChild(regexText);
+    statusMiddle.appendChild(regexLabel);
+
     this._statusRight = document.createElement('div');
     this._statusRight.className = 'jp-ParquetViewer-statusRight';
 
     this._statusBar.appendChild(this._statusLeft);
+    this._statusBar.appendChild(statusMiddle);
     this._statusBar.appendChild(this._statusRight);
     this._tableContainer.appendChild(this._statusBar);
 
@@ -159,7 +207,9 @@ export class ParquetViewer extends Widget {
           limit: this._limit,
           filters: this._filters,
           sortBy: this._sortBy,
-          sortOrder: this._sortOrder
+          sortOrder: this._sortOrder,
+          caseInsensitive: this._caseInsensitive,
+          useRegex: this._useRegex
         })
       });
 
@@ -373,7 +423,7 @@ export class ParquetViewer extends Widget {
     if (this._isNumericType(type)) {
       return '=, >, <, >=, <=';
     }
-    return 'Filter text...';
+    return 'text or regex...';
   }
 
   /**

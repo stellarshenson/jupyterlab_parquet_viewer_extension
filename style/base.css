@@ -171,6 +171,31 @@
   color: var(--jp-ui-font-color2);
 }
 
+.jp-ParquetViewer-statusMiddle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0 12px;
+  gap: 16px;
+}
+
+.jp-ParquetViewer-caseInsensitiveLabel,
+.jp-ParquetViewer-regexLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size1);
+  user-select: none;
+}
+
+.jp-ParquetViewer-caseInsensitiveCheckbox,
+.jp-ParquetViewer-regexCheckbox {
+  margin: 0 4px 0 0;
+  cursor: pointer;
+}
+
 .jp-ParquetViewer-statusRight {
   text-align: right;
   color: var(--jp-ui-font-color2);

@@ -47,11 +47,15 @@ __webpack_require__.r(__webpack_exports__);
  * A widget factory for Parquet files
  */
 class ParquetWidgetFactory extends _jupyterlab_docregistry__WEBPACK_IMPORTED_MODULE_0__.ABCWidgetFactory {
+    constructor(options, setLastContextMenuRow) {
+        super(options);
+        this._setLastContextMenuRow = setLastContextMenuRow;
+    }
     /**
      * Create a new widget given a context
      */
     createNewWidget(context) {
-        const content = new _widget__WEBPACK_IMPORTED_MODULE_1__.ParquetViewer(context.path);
+        const content = new _widget__WEBPACK_IMPORTED_MODULE_1__.ParquetViewer(context.path, this._setLastContextMenuRow);
         const widget = new _document__WEBPACK_IMPORTED_MODULE_2__.ParquetDocument({ content, context });
         widget.title.label = context.path.split('/').pop() || 'Parquet File';
         return widget;
@@ -67,7 +71,31 @@ const plugin = {
     requires: [],
     activate: (app) => {
         console.log('JupyterLab extension jupyterlab_parquet_viewer_extension is activated!');
-        const { docRegistry } = app;
+        const { docRegistry, commands, contextMenu } = app;
+        // Track last right-clicked row for context menu
+        let lastContextMenuRow = null;
+        // Command to copy row as JSON
+        const copyRowCommand = 'parquet-viewer:copy-row-json';
+        commands.addCommand(copyRowCommand, {
+            label: 'Copy Row as JSON',
+            caption: 'Copy the row data as JSON to clipboard',
+            isEnabled: () => {
+                return lastContextMenuRow !== null;
+            },
+            execute: async () => {
+                if (lastContextMenuRow) {
+                    const jsonString = JSON.stringify(lastContextMenuRow, null, 2);
+                    await navigator.clipboard.writeText(jsonString);
+                    console.log('Row copied to clipboard as JSON');
+                }
+            }
+        });
+        // Add to context menu for parquet viewer rows
+        contextMenu.addItem({
+            command: copyRowCommand,
+            selector: '.jp-ParquetViewer-row',
+            rank: 10
+        });
         // Register the file type - mark as binary to prevent text loading
         try {
             docRegistry.addFileType({
@@ -92,6 +120,8 @@ const plugin = {
             defaultFor: ['parquet'],
             defaultRendered: ['parquet'],
             readOnly: true
+        }, (row) => {
+            lastContextMenuRow = row;
         });
         // Register the factory
         docRegistry.addWidgetFactory(factory);
@@ -175,7 +205,7 @@ __webpack_require__.r(__webpack_exports__);
  * Parquet viewer widget
  */
 class ParquetViewer extends _lumino_widgets__WEBPACK_IMPORTED_MODULE_0__.Widget {
-    constructor(filePath) {
+    constructor(filePath, setLastContextMenuRow) {
         super();
         this._columns = [];
         this._data = [];
@@ -191,7 +221,9 @@ class ParquetViewer extends _lumino_widgets__WEBPACK_IMPORTED_MODULE_0__.Widget 
         this._fileSize = 0;
         this._caseInsensitive = false;
         this._useRegex = false;
+        this._contextMenuOpen = false;
         this._filePath = filePath;
+        this._setLastContextMenuRow = setLastContextMenuRow;
         this.addClass('jp-ParquetViewer');
         // Create main container
         this._tableContainer = document.createElement('div');
@@ -263,6 +295,28 @@ class ParquetViewer extends _lumino_widgets__WEBPACK_IMPORTED_MODULE_0__.Widget 
         // Set up scroll listener for progressive loading
         this._tableContainer.addEventListener('scroll', () => {
             this._onScroll();
+        });
+        // Remove context-active class when clicking anywhere or dismissing context menu
+        const removeHighlight = () => {
+            this._contextMenuOpen = false;
+            this._tbody.querySelectorAll('tr').forEach(r => {
+                r.classList.remove('jp-ParquetViewer-row-context-active');
+            });
+        };
+        document.addEventListener('click', removeHighlight);
+        // Remove highlight when ESC key is pressed (dismisses context menu)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                removeHighlight();
+            }
+        });
+        // Remove highlight when context menu closes (clicking outside, etc.)
+        document.addEventListener('contextmenu', (e) => {
+            // Check if the context menu is being opened on a different element
+            const target = e.target;
+            if (!target.closest('.jp-ParquetViewer-row')) {
+                removeHighlight();
+            }
         });
         // Initialize
         this._initialize();
@@ -401,6 +455,28 @@ class ParquetViewer extends _lumino_widgets__WEBPACK_IMPORTED_MODULE_0__.Widget 
                 const value = row[col.name];
                 td.textContent = value !== null && value !== undefined ? String(value) : '';
                 tr.appendChild(td);
+            });
+            // Remove context-active class when hovering over any row (only if context menu not open)
+            tr.addEventListener('mouseenter', () => {
+                // Don't clear highlight while context menu is open
+                if (!this._contextMenuOpen) {
+                    this._tbody.querySelectorAll('tr').forEach(r => {
+                        r.classList.remove('jp-ParquetViewer-row-context-active');
+                    });
+                }
+            });
+            // Add right-click handler to store row data and maintain hover styling
+            tr.addEventListener('contextmenu', (e) => {
+                // Mark context menu as open
+                this._contextMenuOpen = true;
+                // Remove context-active class from all rows
+                this._tbody.querySelectorAll('tr').forEach(r => {
+                    r.classList.remove('jp-ParquetViewer-row-context-active');
+                });
+                // Add context-active class to keep hover styling visible
+                tr.classList.add('jp-ParquetViewer-row-context-active');
+                // Store row data for context menu
+                this._setLastContextMenuRow(row);
             });
             this._tbody.appendChild(tr);
         });
@@ -637,4 +713,4 @@ class ParquetViewer extends _lumino_widgets__WEBPACK_IMPORTED_MODULE_0__.Widget 
 /***/ })
 
 }]);
-//# sourceMappingURL=lib_index_js.437680a70aaad20e1aba.js.map
+//# sourceMappingURL=lib_index_js.7fdfffc106442d7f2a5a.js.map

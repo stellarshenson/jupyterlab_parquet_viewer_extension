@@ -124,7 +124,7 @@ __webpack_require__.d(exports, {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + chunkId + "." + {"lib_index_js":"437680a70aaad20e1aba","style_index_js":"846978ce206e47097e9a"}[chunkId] + ".js";
+/******/ 			return "" + chunkId + "." + {"lib_index_js":"7fdfffc106442d7f2a5a","style_index_js":"3bdf8ecf51c2b957ee71"}[chunkId] + ".js";
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -242,7 +242,7 @@ __webpack_require__.d(exports, {
 /******/ 			var promises = [];
 /******/ 			switch(name) {
 /******/ 				case "default": {
-/******/ 					register("jupyterlab_parquet_viewer_extension", "1.0.0", () => (__webpack_require__.e("lib_index_js").then(() => (() => (__webpack_require__(/*! ./lib/index.js */ "./lib/index.js"))))));
+/******/ 					register("jupyterlab_parquet_viewer_extension", "1.0.7", () => (__webpack_require__.e("lib_index_js").then(() => (() => (__webpack_require__(/*! ./lib/index.js */ "./lib/index.js"))))));
 /******/ 				}
 /******/ 				break;
 /******/ 			}
@@ -551,4 +551,4 @@ __webpack_require__.d(exports, {
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=remoteEntry.535042b87a26f3eaf5c7.js.map
+//# sourceMappingURL=remoteEntry.8b44d07170b17a87ecd7.js.map

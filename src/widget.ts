@@ -37,6 +37,7 @@ export class ParquetViewer extends Widget {
   private _fileSize = 0;
   private _caseInsensitive = false;
   private _useRegex = false;
+  private _contextMenuOpen = false;
 
   private _tableContainer: HTMLDivElement;
   private _table: HTMLTableElement;
@@ -49,10 +50,12 @@ export class ParquetViewer extends Widget {
   private _statusRight: HTMLDivElement;
   private _caseInsensitiveCheckbox: HTMLInputElement;
   private _regexCheckbox: HTMLInputElement;
+  private _setLastContextMenuRow: (row: any) => void;
 
-  constructor(filePath: string) {
+  constructor(filePath: string, setLastContextMenuRow: (row: any) => void) {
     super();
     this._filePath = filePath;
+    this._setLastContextMenuRow = setLastContextMenuRow;
     this.addClass('jp-ParquetViewer');
 
     // Create main container
@@ -147,6 +150,32 @@ export class ParquetViewer extends Widget {
     // Set up scroll listener for progressive loading
     this._tableContainer.addEventListener('scroll', () => {
       this._onScroll();
+    });
+
+    // Remove context-active class when clicking anywhere or dismissing context menu
+    const removeHighlight = () => {
+      this._contextMenuOpen = false;
+      this._tbody.querySelectorAll('tr').forEach(r => {
+        r.classList.remove('jp-ParquetViewer-row-context-active');
+      });
+    };
+
+    document.addEventListener('click', removeHighlight);
+
+    // Remove highlight when ESC key is pressed (dismisses context menu)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        removeHighlight();
+      }
+    });
+
+    // Remove highlight when context menu closes (clicking outside, etc.)
+    document.addEventListener('contextmenu', (e) => {
+      // Check if the context menu is being opened on a different element
+      const target = e.target as HTMLElement;
+      if (!target.closest('.jp-ParquetViewer-row')) {
+        removeHighlight();
+      }
     });
 
     // Initialize
@@ -308,6 +337,33 @@ export class ParquetViewer extends Widget {
         const value = row[col.name];
         td.textContent = value !== null && value !== undefined ? String(value) : '';
         tr.appendChild(td);
+      });
+
+      // Remove context-active class when hovering over any row (only if context menu not open)
+      tr.addEventListener('mouseenter', () => {
+        // Don't clear highlight while context menu is open
+        if (!this._contextMenuOpen) {
+          this._tbody.querySelectorAll('tr').forEach(r => {
+            r.classList.remove('jp-ParquetViewer-row-context-active');
+          });
+        }
+      });
+
+      // Add right-click handler to store row data and maintain hover styling
+      tr.addEventListener('contextmenu', (e) => {
+        // Mark context menu as open
+        this._contextMenuOpen = true;
+
+        // Remove context-active class from all rows
+        this._tbody.querySelectorAll('tr').forEach(r => {
+          r.classList.remove('jp-ParquetViewer-row-context-active');
+        });
+
+        // Add context-active class to keep hover styling visible
+        tr.classList.add('jp-ParquetViewer-row-context-active');
+
+        // Store row data for context menu
+        this._setLastContextMenuRow(row);
       });
 
       this._tbody.appendChild(tr);

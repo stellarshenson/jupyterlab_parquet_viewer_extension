@@ -1,6 +1,6 @@
 {
   "name": "jupyterlab_parquet_viewer_extension",
-  "version": "1.0.7",
+  "version": "1.0.11",
   "description": "Jupyterlab extension to allow simple browsing of the parquet files with basic data filtering capabilities",
   "keywords": [
     "jupyter",
@@ -113,7 +113,7 @@
     "extension": true,
     "outputDir": "jupyterlab_parquet_viewer_extension/labextension",
     "_build": {
-      "load": "static/remoteEntry.8b44d07170b17a87ecd7.js",
+      "load": "static/remoteEntry.53b5e58308bd6f03610f.js",
       "extension": "./extension",
       "style": "./style"
     }

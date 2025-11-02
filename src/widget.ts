@@ -51,6 +51,8 @@ export class ParquetViewer extends Widget {
   private _caseInsensitiveCheckbox: HTMLInputElement;
   private _regexCheckbox: HTMLInputElement;
   private _setLastContextMenuRow: (row: any) => void;
+  private _cleanupHighlight: (() => void) | null = null;
+  private _menuObserver: MutationObserver | null = null;
 
   constructor(filePath: string, setLastContextMenuRow: (row: any) => void) {
     super();
@@ -155,31 +157,65 @@ export class ParquetViewer extends Widget {
     // Remove context-active class when clicking anywhere or dismissing context menu
     const removeHighlight = () => {
       this._contextMenuOpen = false;
+      this._tbody.classList.remove('jp-ParquetViewer-context-menu-open');
       this._tbody.querySelectorAll('tr').forEach(r => {
         r.classList.remove('jp-ParquetViewer-row-context-active');
       });
+
+      // Stop observing when highlight is removed
+      if (this._menuObserver) {
+        this._menuObserver.disconnect();
+        this._menuObserver = null;
+      }
     };
 
-    document.addEventListener('click', removeHighlight);
-
-    // Remove highlight when ESC key is pressed (dismisses context menu)
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        removeHighlight();
-      }
-    });
-
-    // Remove highlight when context menu closes (clicking outside, etc.)
-    document.addEventListener('contextmenu', (e) => {
-      // Check if the context menu is being opened on a different element
-      const target = e.target as HTMLElement;
-      if (!target.closest('.jp-ParquetViewer-row')) {
-        removeHighlight();
-      }
-    });
+    // Store cleanup function for external access
+    this._cleanupHighlight = removeHighlight;
 
     // Initialize
     this._initialize();
+  }
+
+  /**
+   * Start observing for menu removal when context menu opens
+   */
+  private _startMenuObserver(): void {
+    // Stop any existing observer
+    if (this._menuObserver) {
+      this._menuObserver.disconnect();
+    }
+
+    // Create observer to watch for menu removal from DOM
+    this._menuObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+          // Check if any removed node is a Lumino menu
+          for (const node of Array.from(mutation.removedNodes)) {
+            if (node instanceof HTMLElement &&
+                (node.classList.contains('lm-Menu') || node.classList.contains('p-Menu'))) {
+              // Menu was removed, clear highlight
+              if (this._cleanupHighlight) {
+                this._cleanupHighlight();
+              }
+              return;
+            }
+          }
+        }
+      }
+    });
+
+    // Observe document body for child removals
+    this._menuObserver.observe(document.body, {
+      childList: true,
+      subtree: false
+    });
+  }
+
+  /**
+   * Get cleanup function to clear highlight (for external use)
+   */
+  public getCleanupHighlight(): () => void {
+    return this._cleanupHighlight || (() => {});
   }
 
   /**
@@ -354,6 +390,9 @@ export class ParquetViewer extends Widget {
         // Mark context menu as open
         this._contextMenuOpen = true;
 
+        // Add class to tbody to disable hover on other rows
+        this._tbody.classList.add('jp-ParquetViewer-context-menu-open');
+
         // Remove context-active class from all rows
         this._tbody.querySelectorAll('tr').forEach(r => {
           r.classList.remove('jp-ParquetViewer-row-context-active');
@@ -364,6 +403,9 @@ export class ParquetViewer extends Widget {
 
         // Store row data for context menu
         this._setLastContextMenuRow(row);
+
+        // Start observing for menu removal
+        this._startMenuObserver();
       });
 
       this._tbody.appendChild(tr);
@@ -622,6 +664,13 @@ export class ParquetViewer extends Widget {
    */
   dispose(): void {
     this._tableContainer.removeEventListener('scroll', this._onScroll);
+
+    // Clean up menu observer
+    if (this._menuObserver) {
+      this._menuObserver.disconnect();
+      this._menuObserver = null;
+    }
+
     super.dispose();
   }
 }

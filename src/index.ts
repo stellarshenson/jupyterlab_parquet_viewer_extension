@@ -19,13 +19,16 @@ class ParquetWidgetFactory extends ABCWidgetFactory<
   IDocumentWidget<ParquetViewer>
 > {
   private _setLastContextMenuRow: (row: any) => void;
+  private _setActiveWidget: (widget: ParquetViewer) => void;
 
   constructor(
     options: DocumentRegistry.IWidgetFactoryOptions,
-    setLastContextMenuRow: (row: any) => void
+    setLastContextMenuRow: (row: any) => void,
+    setActiveWidget: (widget: ParquetViewer) => void
   ) {
     super(options);
     this._setLastContextMenuRow = setLastContextMenuRow;
+    this._setActiveWidget = setActiveWidget;
   }
 
   /**
@@ -37,6 +40,10 @@ class ParquetWidgetFactory extends ABCWidgetFactory<
     const content = new ParquetViewer(context.path, this._setLastContextMenuRow);
     const widget = new ParquetDocument({ content, context });
     widget.title.label = context.path.split('/').pop() || 'Parquet File';
+
+    // Track this as the active widget when context menu is used
+    this._setActiveWidget(content);
+
     return widget;
   }
 }
@@ -59,6 +66,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
     // Track last right-clicked row for context menu
     let lastContextMenuRow: any = null;
+    let activeWidget: ParquetViewer | null = null;
 
     // Command to copy row as JSON
     const copyRowCommand = 'parquet-viewer:copy-row-json';
@@ -73,6 +81,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
           const jsonString = JSON.stringify(lastContextMenuRow, null, 2);
           await navigator.clipboard.writeText(jsonString);
           console.log('Row copied to clipboard as JSON');
+
+          // Clean up highlight after copy
+          if (activeWidget) {
+            activeWidget.getCleanupHighlight()();
+          }
         }
       }
     });
@@ -112,6 +125,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
       },
       (row: any) => {
         lastContextMenuRow = row;
+      },
+      (widget: ParquetViewer) => {
+        activeWidget = widget;
       }
     );
 

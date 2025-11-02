@@ -132,7 +132,8 @@
   border-bottom: 1px solid var(--jp-border-color2);
 }
 
-.jp-ParquetViewer-row:hover,
+/* Only enable hover when context menu is not open */
+.jp-ParquetViewer-tbody:not(.jp-ParquetViewer-context-menu-open) .jp-ParquetViewer-row:hover,
 .jp-ParquetViewer-row-context-active {
   background-color: var(--jp-layout-color2);
 }

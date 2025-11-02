@@ -21,7 +21,7 @@ interface IFilterSpec {
 /**
  * Parquet viewer widget
  */
-export class ParquetViewer extends Widget {
+export class TabularDataViewer extends Widget {
   private _filePath: string;
   private _columns: IColumnMetadata[] = [];
   private _data: any[] = [];
@@ -60,29 +60,29 @@ export class ParquetViewer extends Widget {
     super();
     this._filePath = filePath;
     this._setLastContextMenuRow = setLastContextMenuRow;
-    this.addClass('jp-ParquetViewer');
+    this.addClass('jp-TabularDataViewer');
 
     // Create table container (scrollable)
     this._tableContainer = document.createElement('div');
-    this._tableContainer.className = 'jp-ParquetViewer-container';
+    this._tableContainer.className = 'jp-TabularDataViewer-container';
 
     // Create table
     this._table = document.createElement('table');
-    this._table.className = 'jp-ParquetViewer-table';
+    this._table.className = 'jp-TabularDataViewer-table';
 
     this._thead = document.createElement('thead');
-    this._thead.className = 'jp-ParquetViewer-thead';
+    this._thead.className = 'jp-TabularDataViewer-thead';
 
     this._tbody = document.createElement('tbody');
-    this._tbody.className = 'jp-ParquetViewer-tbody';
+    this._tbody.className = 'jp-TabularDataViewer-tbody';
 
     // Create filter row
     this._filterRow = document.createElement('tr');
-    this._filterRow.className = 'jp-ParquetViewer-filterRow';
+    this._filterRow.className = 'jp-TabularDataViewer-filterRow';
 
     // Create header row
     this._headerRow = document.createElement('tr');
-    this._headerRow.className = 'jp-ParquetViewer-headerRow';
+    this._headerRow.className = 'jp-TabularDataViewer-headerRow';
 
     this._thead.appendChild(this._filterRow);
     this._thead.appendChild(this._headerRow);
@@ -93,21 +93,21 @@ export class ParquetViewer extends Widget {
 
     // Create status bar (outside scroll container)
     this._statusBar = document.createElement('div');
-    this._statusBar.className = 'jp-ParquetViewer-statusBar';
+    this._statusBar.className = 'jp-TabularDataViewer-statusBar';
 
     this._statusLeft = document.createElement('div');
-    this._statusLeft.className = 'jp-ParquetViewer-statusLeft';
+    this._statusLeft.className = 'jp-TabularDataViewer-statusLeft';
 
     // Create middle section with case-insensitive checkbox
     const statusMiddle = document.createElement('div');
-    statusMiddle.className = 'jp-ParquetViewer-statusMiddle';
+    statusMiddle.className = 'jp-TabularDataViewer-statusMiddle';
 
     const checkboxLabel = document.createElement('label');
-    checkboxLabel.className = 'jp-ParquetViewer-caseInsensitiveLabel';
+    checkboxLabel.className = 'jp-TabularDataViewer-caseInsensitiveLabel';
 
     this._caseInsensitiveCheckbox = document.createElement('input');
     this._caseInsensitiveCheckbox.type = 'checkbox';
-    this._caseInsensitiveCheckbox.className = 'jp-ParquetViewer-caseInsensitiveCheckbox';
+    this._caseInsensitiveCheckbox.className = 'jp-TabularDataViewer-caseInsensitiveCheckbox';
     this._caseInsensitiveCheckbox.checked = this._caseInsensitive;
     this._caseInsensitiveCheckbox.addEventListener('change', () => {
       this._caseInsensitive = this._caseInsensitiveCheckbox.checked;
@@ -123,11 +123,11 @@ export class ParquetViewer extends Widget {
 
     // Create regex checkbox
     const regexLabel = document.createElement('label');
-    regexLabel.className = 'jp-ParquetViewer-regexLabel';
+    regexLabel.className = 'jp-TabularDataViewer-regexLabel';
 
     this._regexCheckbox = document.createElement('input');
     this._regexCheckbox.type = 'checkbox';
-    this._regexCheckbox.className = 'jp-ParquetViewer-regexCheckbox';
+    this._regexCheckbox.className = 'jp-TabularDataViewer-regexCheckbox';
     this._regexCheckbox.checked = this._useRegex;
     this._regexCheckbox.addEventListener('change', () => {
       this._useRegex = this._regexCheckbox.checked;
@@ -142,7 +142,7 @@ export class ParquetViewer extends Widget {
     statusMiddle.appendChild(regexLabel);
 
     this._statusRight = document.createElement('div');
-    this._statusRight.className = 'jp-ParquetViewer-statusRight';
+    this._statusRight.className = 'jp-TabularDataViewer-statusRight';
 
     this._statusBar.appendChild(this._statusLeft);
     this._statusBar.appendChild(statusMiddle);
@@ -160,9 +160,9 @@ export class ParquetViewer extends Widget {
     // Remove context-active class when clicking anywhere or dismissing context menu
     const removeHighlight = () => {
       this._contextMenuOpen = false;
-      this._tbody.classList.remove('jp-ParquetViewer-context-menu-open');
+      this._tbody.classList.remove('jp-TabularDataViewer-context-menu-open');
       this._tbody.querySelectorAll('tr').forEach(r => {
-        r.classList.remove('jp-ParquetViewer-row-context-active');
+        r.classList.remove('jp-TabularDataViewer-row-context-active');
       });
 
       // Stop observing when highlight is removed
@@ -310,11 +310,11 @@ export class ParquetViewer extends Widget {
     this._columns.forEach(col => {
       // Create filter cell
       const filterCell = document.createElement('th');
-      filterCell.className = 'jp-ParquetViewer-filterCell';
+      filterCell.className = 'jp-TabularDataViewer-filterCell';
 
       const filterInput = document.createElement('input');
       filterInput.type = 'text';
-      filterInput.className = 'jp-ParquetViewer-filterInput';
+      filterInput.className = 'jp-TabularDataViewer-filterInput';
       filterInput.placeholder = this._getFilterPlaceholder(col.type);
       filterInput.dataset.columnName = col.name;
       filterInput.dataset.columnType = col.type;
@@ -330,7 +330,7 @@ export class ParquetViewer extends Widget {
 
       // Create header cell with column name and type
       const headerCell = document.createElement('th');
-      headerCell.className = 'jp-ParquetViewer-headerCell';
+      headerCell.className = 'jp-TabularDataViewer-headerCell';
       headerCell.style.cursor = 'pointer';
       headerCell.dataset.columnName = col.name;
 
@@ -340,18 +340,18 @@ export class ParquetViewer extends Widget {
       });
 
       const headerContent = document.createElement('div');
-      headerContent.className = 'jp-ParquetViewer-headerContent';
+      headerContent.className = 'jp-TabularDataViewer-headerContent';
 
       const nameSpan = document.createElement('div');
-      nameSpan.className = 'jp-ParquetViewer-columnName';
+      nameSpan.className = 'jp-TabularDataViewer-columnName';
       nameSpan.textContent = col.name;
 
       const typeSpan = document.createElement('div');
-      typeSpan.className = 'jp-ParquetViewer-columnType';
+      typeSpan.className = 'jp-TabularDataViewer-columnType';
       typeSpan.textContent = this._simplifyType(col.type);
 
       const sortIndicator = document.createElement('span');
-      sortIndicator.className = 'jp-ParquetViewer-sortIndicator';
+      sortIndicator.className = 'jp-TabularDataViewer-sortIndicator';
       sortIndicator.textContent = '';
 
       headerContent.appendChild(nameSpan);
@@ -361,7 +361,7 @@ export class ParquetViewer extends Widget {
 
       // Add resize handle
       const resizeHandle = document.createElement('div');
-      resizeHandle.className = 'jp-ParquetViewer-resizeHandle';
+      resizeHandle.className = 'jp-TabularDataViewer-resizeHandle';
       resizeHandle.addEventListener('mousedown', (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -396,11 +396,11 @@ export class ParquetViewer extends Widget {
   private _renderData(rows: any[]): void {
     rows.forEach(row => {
       const tr = document.createElement('tr');
-      tr.className = 'jp-ParquetViewer-row';
+      tr.className = 'jp-TabularDataViewer-row';
 
       this._columns.forEach(col => {
         const td = document.createElement('td');
-        td.className = 'jp-ParquetViewer-cell';
+        td.className = 'jp-TabularDataViewer-cell';
         const value = row[col.name];
         td.textContent = value !== null && value !== undefined ? String(value) : '';
         tr.appendChild(td);
@@ -411,7 +411,7 @@ export class ParquetViewer extends Widget {
         // Don't clear highlight while context menu is open
         if (!this._contextMenuOpen) {
           this._tbody.querySelectorAll('tr').forEach(r => {
-            r.classList.remove('jp-ParquetViewer-row-context-active');
+            r.classList.remove('jp-TabularDataViewer-row-context-active');
           });
         }
       });
@@ -422,15 +422,15 @@ export class ParquetViewer extends Widget {
         this._contextMenuOpen = true;
 
         // Add class to tbody to disable hover on other rows
-        this._tbody.classList.add('jp-ParquetViewer-context-menu-open');
+        this._tbody.classList.add('jp-TabularDataViewer-context-menu-open');
 
         // Remove context-active class from all rows
         this._tbody.querySelectorAll('tr').forEach(r => {
-          r.classList.remove('jp-ParquetViewer-row-context-active');
+          r.classList.remove('jp-TabularDataViewer-row-context-active');
         });
 
         // Add context-active class to keep hover styling visible
-        tr.classList.add('jp-ParquetViewer-row-context-active');
+        tr.classList.add('jp-TabularDataViewer-row-context-active');
 
         // Store row data for context menu
         this._setLastContextMenuRow(row);
@@ -673,7 +673,7 @@ export class ParquetViewer extends Widget {
     const headers = this._headerRow.querySelectorAll('th');
     headers.forEach(header => {
       const columnName = header.dataset.columnName;
-      const indicator = header.querySelector('.jp-ParquetViewer-sortIndicator') as HTMLElement;
+      const indicator = header.querySelector('.jp-TabularDataViewer-sortIndicator') as HTMLElement;
 
       if (columnName === this._sortBy) {
         indicator.textContent = this._sortOrder === 'asc' ? ' ▲' : ' ▼';
@@ -735,7 +735,7 @@ export class ParquetViewer extends Widget {
       if (filterCount > 0) {
         const clearLink = document.createElement('a');
         clearLink.href = '#';
-        clearLink.className = 'jp-ParquetViewer-clearFilters';
+        clearLink.className = 'jp-TabularDataViewer-clearFilters';
         clearLink.textContent = 'Clear filters';
         clearLink.addEventListener('click', (e) => {
           e.preventDefault();
@@ -756,7 +756,7 @@ export class ParquetViewer extends Widget {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
     td.colSpan = this._columns.length || 1;
-    td.className = 'jp-ParquetViewer-error';
+    td.className = 'jp-TabularDataViewer-error';
     td.textContent = message;
     tr.appendChild(td);
     this._tbody.appendChild(tr);

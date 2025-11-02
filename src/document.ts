@@ -1,11 +1,11 @@
 import { DocumentWidget } from '@jupyterlab/docregistry';
-import { ParquetViewer } from './widget';
+import { TabularDataViewer } from './widget';
 
 /**
- * A document widget for Parquet files
+ * A document widget for tabular data files (Parquet, Excel)
  */
-export class ParquetDocument extends DocumentWidget<ParquetViewer> {
-  constructor(options: DocumentWidget.IOptions<ParquetViewer>) {
+export class TabularDataDocument extends DocumentWidget<TabularDataViewer> {
+  constructor(options: DocumentWidget.IOptions<TabularDataViewer>) {
     super(options);
   }
 }

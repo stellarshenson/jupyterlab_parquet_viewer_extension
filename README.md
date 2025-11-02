@@ -1,9 +1,9 @@
-# jupyterlab_parquet_viewer_extension
+# jupyterlab_tabular_data_viewer_extension
 
-![GitHub Actions](https://github.com/stellarshenson/jupyterlab_parquet_viewer_extension/actions/workflows/build.yml/badge.svg)
-[![npm version](https://badge.fury.io/js/jupyterlab_parquet_viewer_extension.svg)](https://www.npmjs.com/package/jupyterlab_parquet_viewer_extension)
-[![PyPI version](https://badge.fury.io/py/jupyterlab-parquet-viewer-extension.svg)](https://pypi.org/project/jupyterlab-parquet-viewer-extension/)
-[![Total PyPI downloads](https://static.pepy.tech/badge/jupyterlab-parquet-viewer-extension)](https://pepy.tech/project/jupyterlab-parquet-viewer-extension)
+![GitHub Actions](https://github.com/stellarshenson/jupyterlab_tabular_data_viewer_extension/actions/workflows/build.yml/badge.svg)
+[![npm version](https://badge.fury.io/js/jupyterlab_tabular_data_viewer_extension.svg)](https://www.npmjs.com/package/jupyterlab_tabular_data_viewer_extension)
+[![PyPI version](https://badge.fury.io/py/jupyterlab-tabular-data-viewer-extension.svg)](https://pypi.org/project/jupyterlab-tabular-data-viewer-extension/)
+[![Total PyPI downloads](https://static.pepy.tech/badge/jupyterlab-tabular-data-viewer-extension)](https://pepy.tech/project/jupyterlab-tabular-data-viewer-extension)
 ![JL4 Ready](https://img.shields.io/badge/Jupyterlab%204-ready-blue)
 
 View and browse Parquet and Excel files directly in JupyterLab. Double-click any .parquet or .xlsx file to open it in a simple, spreadsheet-like table view - no code required. Navigate through your data, inspect values, and explore the structure of your tabular data files with interactive column resizing and advanced filtering capabilities.
@@ -43,12 +43,12 @@ View and browse Parquet and Excel files directly in JupyterLab. Double-click any
 Requires JupyterLab 4.0.0 or higher.
 
 ```bash
-pip install jupyterlab_parquet_viewer_extension
+pip install jupyterlab_tabular_data_viewer_extension
 ```
 
 Uninstall:
 ```bash
-pip uninstall jupyterlab_parquet_viewer_extension
+pip uninstall jupyterlab_tabular_data_viewer_extension
 ```
 
 ## Configuration
@@ -75,7 +75,7 @@ jupyter server extension list
 jupyter labextension list
 ```
 
-Both commands should show `jupyterlab_parquet_viewer_extension` as enabled. Reinstall if either is missing or disabled.
+Both commands should show `jupyterlab_tabular_data_viewer_extension` as enabled. Reinstall if either is missing or disabled.
 
 ## Development Setup
 
@@ -93,7 +93,7 @@ pip install --editable ".[dev,test]"
 
 # Link frontend and enable server extension
 jupyter labextension develop . --overwrite
-jupyter server extension enable jupyterlab_parquet_viewer_extension
+jupyter server extension enable jupyterlab_tabular_data_viewer_extension
 ```
 
 **Development workflow:**
@@ -112,11 +112,11 @@ jupyter lab build --minimize=False
 **Removing development installation:**
 
 ```bash
-jupyter server extension disable jupyterlab_parquet_viewer_extension
-pip uninstall jupyterlab_parquet_viewer_extension
+jupyter server extension disable jupyterlab_tabular_data_viewer_extension
+pip uninstall jupyterlab_tabular_data_viewer_extension
 ```
 
-Then delete the `jupyterlab_parquet_viewer_extension` symlink from your `labextensions` directory (find with `jupyter labextension list`).
+Then delete the `jupyterlab_tabular_data_viewer_extension` symlink from your `labextensions` directory (find with `jupyter labextension list`).
 
 ## Testing
 
@@ -126,7 +126,7 @@ Three-tier testing strategy: Python backend, TypeScript frontend, and integratio
 ```bash
 pip install -e ".[test]"
 jupyter labextension develop . --overwrite
-pytest -vv -r ap --cov jupyterlab_parquet_viewer_extension
+pytest -vv -r ap --cov jupyterlab_tabular_data_viewer_extension
 ```
 
 **TypeScript tests** (Jest):

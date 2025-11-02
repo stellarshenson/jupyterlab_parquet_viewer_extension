@@ -314,8 +314,8 @@ def setup_route_handlers(web_app):
     host_pattern = ".*$"
     base_url = web_app.settings["base_url"]
 
-    metadata_pattern = url_path_join(base_url, "jupyterlab-parquet-viewer-extension", "metadata")
-    data_pattern = url_path_join(base_url, "jupyterlab-parquet-viewer-extension", "data")
+    metadata_pattern = url_path_join(base_url, "jupyterlab-tabular-data-viewer-extension", "metadata")
+    data_pattern = url_path_join(base_url, "jupyterlab-tabular-data-viewer-extension", "data")
 
     handlers = [
         (metadata_pattern, ParquetMetadataHandler),

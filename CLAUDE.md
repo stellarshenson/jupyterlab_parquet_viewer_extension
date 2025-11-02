@@ -15,12 +15,12 @@ The extension follows the standard JupyterLab extension template (v4.5.0 from ju
 ### Frontend (TypeScript)
 - Entry point: `src/index.ts` - defines the JupyterLab plugin
 - API communication: `src/request.ts` - handles requests to server extension
-- Plugin ID: `jupyterlab_parquet_viewer_extension:plugin`
+- Plugin ID: `jupyterlab_tabular_data_viewer_extension:plugin`
 
 ### Backend (Python)
-- Entry point: `jupyterlab_parquet_viewer_extension/__init__.py` - registers server extension
-- API routes: `jupyterlab_parquet_viewer_extension/routes.py` - defines HTTP endpoints
-- Base URL pattern: `/jupyterlab-parquet-viewer-extension/<endpoint>`
+- Entry point: `jupyterlab_tabular_data_viewer_extension/__init__.py` - registers server extension
+- API routes: `jupyterlab_tabular_data_viewer_extension/routes.py` - defines HTTP endpoints
+- Base URL pattern: `/jupyterlab-tabular-data-viewer-extension/<endpoint>`
 
 ## Development Setup
 
@@ -38,7 +38,7 @@ pip install --editable ".[dev,test]"
 jupyter labextension develop . --overwrite
 
 # Enable server extension
-jupyter server extension enable jupyterlab_parquet_viewer_extension
+jupyter server extension enable jupyterlab_tabular_data_viewer_extension
 ```
 
 ### Development Workflow
@@ -64,7 +64,7 @@ After changes, refresh JupyterLab in browser to see updates.
 pip install -e ".[test]"
 
 # Run Python tests with coverage
-pytest -vv -r ap --cov jupyterlab_parquet_viewer_extension
+pytest -vv -r ap --cov jupyterlab_tabular_data_viewer_extension
 ```
 
 ### TypeScript Tests
@@ -151,8 +151,8 @@ jlpm stylelint     # Fix CSS issues
 
 ### Build Outputs
 - `lib/`: Compiled TypeScript (gitignored)
-- `jupyterlab_parquet_viewer_extension/labextension/`: Built extension assets
-- `jupyterlab_parquet_viewer_extension/_version.py`: Auto-generated version file
+- `jupyterlab_tabular_data_viewer_extension/labextension/`: Built extension assets
+- `jupyterlab_tabular_data_viewer_extension/_version.py`: Auto-generated version file
 
 ## Adding New Features
 
@@ -165,13 +165,13 @@ jlpm stylelint     # Fix CSS issues
 ### Adding a Backend Endpoint
 1. Add handler class in `routes.py` inheriting from `APIHandler`
 2. Register route in `setup_route_handlers()`
-3. Use URL pattern: `url_path_join(base_url, "jupyterlab-parquet-viewer-extension", "endpoint-name")`
+3. Use URL pattern: `url_path_join(base_url, "jupyterlab-tabular-data-viewer-extension", "endpoint-name")`
 4. Test with `pytest`
 
 ### Frontend-Backend Communication
 - Use `requestAPI()` from `src/request.ts` to call backend endpoints
-- Endpoints are automatically prefixed with `/jupyterlab-parquet-viewer-extension/`
-- Example: `requestAPI<any>('hello')` calls `/jupyterlab-parquet-viewer-extension/hello`
+- Endpoints are automatically prefixed with `/jupyterlab-tabular-data-viewer-extension/`
+- Example: `requestAPI<any>('hello')` calls `/jupyterlab-tabular-data-viewer-extension/hello`
 
 ## Verification Commands
 
@@ -183,7 +183,7 @@ jupyter server extension list
 jupyter labextension list
 
 # Verify extension is working
-# Look for console message: "JupyterLab extension jupyterlab_parquet_viewer_extension is activated!"
+# Look for console message: "JupyterLab extension jupyterlab_tabular_data_viewer_extension is activated!"
 ```
 
 ## Troubleshooting Development Mode

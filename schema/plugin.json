@@ -1,6 +1,6 @@
 {
-  "title": "Parquet Viewer Extension",
-  "description": "Settings for the Parquet Viewer Extension. Supports Parquet and Excel files.",
+  "title": "Tabular Data Viewer Extension",
+  "description": "Settings for the Tabular Data Viewer Extension. Supports Parquet and Excel files.",
   "type": "object",
   "properties": {
     "enableParquet": {

@@ -11,22 +11,22 @@ import {
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
-import { ParquetViewer } from './widget';
-import { ParquetDocument } from './document';
+import { TabularDataViewer } from './widget';
+import { TabularDataDocument } from './document';
 
 /**
  * A widget factory for Parquet files
  */
-class ParquetWidgetFactory extends ABCWidgetFactory<
-  IDocumentWidget<ParquetViewer>
+class TabularDataWidgetFactory extends ABCWidgetFactory<
+  IDocumentWidget<TabularDataViewer>
 > {
   private _setLastContextMenuRow: (row: any) => void;
-  private _setActiveWidget: (widget: ParquetViewer) => void;
+  private _setActiveWidget: (widget: TabularDataViewer) => void;
 
   constructor(
     options: DocumentRegistry.IWidgetFactoryOptions,
     setLastContextMenuRow: (row: any) => void,
-    setActiveWidget: (widget: ParquetViewer) => void
+    setActiveWidget: (widget: TabularDataViewer) => void
   ) {
     super(options);
     this._setLastContextMenuRow = setLastContextMenuRow;
@@ -38,13 +38,13 @@ class ParquetWidgetFactory extends ABCWidgetFactory<
    */
   protected createNewWidget(
     context: DocumentRegistry.Context
-  ): IDocumentWidget<ParquetViewer> {
-    console.log(`[Parquet Viewer] Creating widget for file: ${context.path}`);
-    console.log(`[Parquet Viewer] File type: ${context.contentsModel?.type}, Format: ${context.contentsModel?.format}`);
+  ): IDocumentWidget<TabularDataViewer> {
+    console.log(`[Tabular Data Viewer] Creating widget for file: ${context.path}`);
+    console.log(`[Tabular Data Viewer] File type: ${context.contentsModel?.type}, Format: ${context.contentsModel?.format}`);
 
-    const content = new ParquetViewer(context.path, this._setLastContextMenuRow);
-    const widget = new ParquetDocument({ content, context });
-    widget.title.label = context.path.split('/').pop() || 'Parquet File';
+    const content = new TabularDataViewer(context.path, this._setLastContextMenuRow);
+    const widget = new TabularDataDocument({ content, context });
+    widget.title.label = context.path.split('/').pop() || 'Tabular Data File';
 
     // Track this as the active widget when context menu is used
     this._setActiveWidget(content);
@@ -62,24 +62,24 @@ interface ISettings {
 }
 
 /**
- * Initialization data for the jupyterlab_parquet_viewer_extension extension.
+ * Initialization data for the jupyterlab_tabular_data_viewer_extension extension.
  */
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'jupyterlab_parquet_viewer_extension:plugin',
+  id: 'jupyterlab_tabular_data_viewer_extension:plugin',
   description:
-    'Jupyterlab extension to allow simple browsing of the parquet files with basic data filtering capabilities',
+    'Jupyterlab extension to allow simple browsing of tabular data files (Parquet, Excel) with filtering and sorting capabilities',
   autoStart: true,
   requires: [ISettingRegistry],
   activate: async (app: JupyterFrontEnd, settingRegistry: ISettingRegistry) => {
     console.log(
-      'JupyterLab extension jupyterlab_parquet_viewer_extension is activated!'
+      'JupyterLab extension jupyterlab_tabular_data_viewer_extension is activated!'
     );
 
     const { docRegistry, commands, contextMenu } = app;
 
     // Track last right-clicked row for context menu
     let lastContextMenuRow: any = null;
-    let activeWidget: ParquetViewer | null = null;
+    let activeWidget: TabularDataViewer | null = null;
 
     // Load settings
     let settings: ISettings = {
@@ -87,27 +87,27 @@ const plugin: JupyterFrontEndPlugin<void> = {
       enableExcel: false
     };
 
-    console.log('[Parquet Viewer] Default settings:', settings);
+    console.log('[Tabular Data Viewer] Default settings:', settings);
 
     try {
-      console.log('[Parquet Viewer] Loading settings from registry with id:', plugin.id);
+      console.log('[Tabular Data Viewer] Loading settings from registry with id:', plugin.id);
       const pluginSettings = await settingRegistry.load(plugin.id);
       settings = pluginSettings.composite as unknown as ISettings;
-      console.log('[Parquet Viewer] Loaded settings:', settings);
-      console.log('[Parquet Viewer] Settings detail - enableParquet:', settings.enableParquet, 'enableExcel:', settings.enableExcel);
+      console.log('[Tabular Data Viewer] Loaded settings:', settings);
+      console.log('[Tabular Data Viewer] Settings detail - enableParquet:', settings.enableParquet, 'enableExcel:', settings.enableExcel);
 
       // Watch for settings changes
       pluginSettings.changed.connect(() => {
         settings = pluginSettings.composite as unknown as ISettings;
-        console.log('[Parquet Viewer] Settings changed:', settings);
+        console.log('[Tabular Data Viewer] Settings changed:', settings);
       });
     } catch (error) {
-      console.error('[Parquet Viewer] Failed to load settings:', error);
-      console.log('[Parquet Viewer] Using default settings:', settings);
+      console.error('[Tabular Data Viewer] Failed to load settings:', error);
+      console.log('[Tabular Data Viewer] Using default settings:', settings);
     }
 
     // Command to copy row as JSON
-    const copyRowCommand = 'parquet-viewer:copy-row-json';
+    const copyRowCommand = 'tabular-data-viewer:copy-row-json';
     commands.addCommand(copyRowCommand, {
       label: 'Copy Row as JSON',
       caption: 'Copy the row data as JSON to clipboard',
@@ -128,16 +128,16 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
     });
 
-    // Add to context menu for parquet viewer rows
+    // Add to context menu for tabular data viewer rows
     contextMenu.addItem({
       command: copyRowCommand,
-      selector: '.jp-ParquetViewer-row',
+      selector: '.jp-TabularDataViewer-row',
       rank: 10
     });
 
     // Register file types based on settings
-    console.log('[Parquet Viewer] Starting file type registration...');
-    console.log('[Parquet Viewer] Current settings state:', settings);
+    console.log('[Tabular Data Viewer] Starting file type registration...');
+    console.log('[Tabular Data Viewer] Current settings state:', settings);
     const binaryFileTypes: string[] = [];
 
     // Register Parquet file type if enabled
@@ -153,9 +153,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
           fileFormat: 'base64'
         });
         binaryFileTypes.push('parquet');
-        console.log('[Parquet Viewer] Parquet file type registered');
+        console.log('[Tabular Data Viewer] Parquet file type registered');
       } catch (e) {
-        console.warn('[Parquet Viewer] Parquet file type already registered', e);
+        console.warn('[Tabular Data Viewer] Parquet file type already registered', e);
       }
     }
 
@@ -172,17 +172,17 @@ const plugin: JupyterFrontEndPlugin<void> = {
           fileFormat: 'base64'
         });
         binaryFileTypes.push('xlsx-parquet-viewer');
-        console.log('[Parquet Viewer] Excel file type registered');
+        console.log('[Tabular Data Viewer] Excel file type registered');
       } catch (e) {
-        console.warn('[Parquet Viewer] Excel file type already registered', e);
+        console.warn('[Tabular Data Viewer] Excel file type already registered', e);
       }
     }
 
     // Create binary factory for Parquet and Excel files
     if (binaryFileTypes.length > 0) {
-      const binaryFactory = new ParquetWidgetFactory(
+      const binaryFactory = new TabularDataWidgetFactory(
         {
-          name: 'Parquet Viewer (Binary)',
+          name: 'Tabular Data Viewer',
           modelName: 'base64',
           fileTypes: binaryFileTypes,
           defaultFor: binaryFileTypes,
@@ -192,15 +192,15 @@ const plugin: JupyterFrontEndPlugin<void> = {
         (row: any) => {
           lastContextMenuRow = row;
         },
-        (widget: ParquetViewer) => {
+        (widget: TabularDataViewer) => {
           activeWidget = widget;
         }
       );
 
       docRegistry.addWidgetFactory(binaryFactory);
-      console.log(`[Parquet Viewer] Binary factory registered for: ${binaryFileTypes.join(', ')}`);
+      console.log(`[Tabular Data Viewer] Binary factory registered for: ${binaryFileTypes.join(', ')}`);
     } else {
-      console.warn('[Parquet Viewer] No file types enabled in settings');
+      console.warn('[Tabular Data Viewer] No file types enabled in settings');
     }
   }
 };

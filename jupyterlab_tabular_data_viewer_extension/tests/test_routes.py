@@ -3,7 +3,7 @@ import json
 
 async def test_hello(jp_fetch):
     # When
-    response = await jp_fetch("jupyterlab-basic-parquet-viewer-extension", "hello")
+    response = await jp_fetch("jupyterlab-tabular-data-viewer-extension", "hello")
 
     # Then
     assert response.code == 200
@@ -11,7 +11,7 @@ async def test_hello(jp_fetch):
     assert payload == {
             "data": (
                 "Hello, world!"
-                " This is the '/jupyterlab-basic-parquet-viewer-extension/hello' endpoint."
+                " This is the '/jupyterlab-tabular-data-viewer-extension/hello' endpoint."
                 " Try visiting me in your browser!"
             ),
         }

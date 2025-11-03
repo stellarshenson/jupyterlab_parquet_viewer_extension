@@ -1,21 +1,134 @@
-import { expect, test } from '@jupyterlab/galata';
+import { expect, galata, test } from '@jupyterlab/galata';
 
-/**
- * Don't load JupyterLab webpage before running the tests.
- * This is required to ensure we capture all log messages.
- */
-test.use({ autoGoto: false });
-
-test('should emit an activation console message', async ({ page }) => {
-  const logs: string[] = [];
-
-  page.on('console', message => {
-    logs.push(message.text());
+test.describe('Tabular Data Viewer Extension', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto();
   });
 
-  await page.goto();
+  test('should open and display Parquet file', async ({ page }) => {
+    // Open the file browser
+    await page.click('[title="File Browser"]');
 
-  expect(
-    logs.filter(s => s === 'JupyterLab extension jupyterlab_tabular_data_viewer_extension is activated!')
-  ).toHaveLength(1);
+    // Navigate to data folder
+    await page.dblclick('text=data');
+
+    // Wait for file to be visible
+    await page.waitForSelector('text=sample_data.parquet', { timeout: 10000 });
+
+    // Open the Parquet file
+    await page.dblclick('text=sample_data.parquet');
+
+    // Wait for the viewer to load
+    await page.waitForSelector('.jp-TabularDataViewer', { timeout: 10000 });
+
+    // Verify the table container is present
+    const tableContainer = await page.locator('.jp-TabularDataViewer-container');
+    await expect(tableContainer).toBeVisible();
+
+    // Verify table headers are present
+    const headerRow = await page.locator('.jp-TabularDataViewer-headerRow');
+    await expect(headerRow).toBeVisible();
+
+    // Verify we have data rows
+    const dataRows = await page.locator('.jp-TabularDataViewer-row');
+    const rowCount = await dataRows.count();
+    expect(rowCount).toBeGreaterThan(0);
+  });
+
+  test('should open and display CSV file', async ({ page }) => {
+    // Open the file browser
+    await page.click('[title="File Browser"]');
+
+    // Navigate to data folder
+    await page.dblclick('text=data');
+
+    // Wait for file to be visible
+    await page.waitForSelector('text=sample_data.csv', { timeout: 10000 });
+
+    // Open the CSV file
+    await page.dblclick('text=sample_data.csv');
+
+    // Wait for the viewer to load
+    await page.waitForSelector('.jp-TabularDataViewer', { timeout: 10000 });
+
+    // Verify the table container is present
+    const tableContainer = await page.locator('.jp-TabularDataViewer-container');
+    await expect(tableContainer).toBeVisible();
+
+    // Verify table headers are present
+    const headerRow = await page.locator('.jp-TabularDataViewer-headerRow');
+    await expect(headerRow).toBeVisible();
+
+    // Verify we have data rows
+    const dataRows = await page.locator('.jp-TabularDataViewer-row');
+    const rowCount = await dataRows.count();
+    expect(rowCount).toBeGreaterThan(0);
+  });
+
+  test('should open and display Excel file', async ({ page }) => {
+    // Open the file browser
+    await page.click('[title="File Browser"]');
+
+    // Navigate to data folder
+    await page.dblclick('text=data');
+
+    // Wait for file to be visible
+    await page.waitForSelector('text=sample_data.xlsx', { timeout: 10000 });
+
+    // Open the Excel file
+    await page.dblclick('text=sample_data.xlsx');
+
+    // Wait for the viewer to load
+    await page.waitForSelector('.jp-TabularDataViewer', { timeout: 10000 });
+
+    // Verify the table container is present
+    const tableContainer = await page.locator('.jp-TabularDataViewer-container');
+    await expect(tableContainer).toBeVisible();
+
+    // Verify table headers are present
+    const headerRow = await page.locator('.jp-TabularDataViewer-headerRow');
+    await expect(headerRow).toBeVisible();
+
+    // Verify we have data rows
+    const dataRows = await page.locator('.jp-TabularDataViewer-row');
+    const rowCount = await dataRows.count();
+    expect(rowCount).toBeGreaterThan(0);
+  });
+
+  test('should open all three file types sequentially', async ({ page }) => {
+    const fileTypes = ['sample_data.parquet', 'sample_data.csv', 'sample_data.xlsx'];
+
+    for (const fileName of fileTypes) {
+      // Open the file browser
+      await page.click('[title="File Browser"]');
+
+      // Navigate to data folder if not already there
+      const dataFolder = await page.locator('text=data').first();
+      if (await dataFolder.isVisible()) {
+        await dataFolder.dblclick();
+      }
+
+      // Wait for file to be visible
+      await page.waitForSelector(`text=${fileName}`, { timeout: 10000 });
+
+      // Open the file
+      await page.dblclick(`text=${fileName}`);
+
+      // Wait for the viewer to load
+      await page.waitForSelector('.jp-TabularDataViewer', { timeout: 10000 });
+
+      // Verify the table container is present
+      const tableContainer = await page.locator('.jp-TabularDataViewer-container');
+      await expect(tableContainer).toBeVisible();
+
+      // Verify we have data rows
+      const dataRows = await page.locator('.jp-TabularDataViewer-row');
+      const rowCount = await dataRows.count();
+      expect(rowCount).toBeGreaterThan(0);
+
+      // Close the tab to prepare for next file
+      await page.keyboard.press('Control+w');
+      await page.waitForTimeout(500);
+    }
+  });
 });

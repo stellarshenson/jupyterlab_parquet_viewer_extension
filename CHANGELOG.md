@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Comprehensive Playwright Integration Tests**: Added end-to-end tests for all supported file types
+  - Individual tests for Parquet, CSV, and Excel file opening and display
+  - Sequential test that opens all three file types in one test session
+  - Tests verify viewer widget presence, table container visibility, header rows, and data rows
+  - Configured Jupyter server to serve from project root for test data access
+  - Tests run automatically in GitHub Actions via existing integration-tests job
+  - Test data files available in `data/` directory (sample_data.parquet, sample_data.csv, sample_data.xlsx)
+
 - **Separate TSV Setting**: Added independent `enableTSV` setting for granular control
   - Split CSV and TSV into separate configuration options in schema
   - CSV files (.csv) controlled by `enableCSV` setting

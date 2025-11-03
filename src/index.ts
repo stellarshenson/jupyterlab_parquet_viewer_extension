@@ -73,9 +73,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   requires: [ISettingRegistry],
   activate: async (app: JupyterFrontEnd, settingRegistry: ISettingRegistry) => {
-    // console.log(
-    //   'JupyterLab extension jupyterlab_tabular_data_viewer_extension is activated!'
-    // );
+    console.log(
+      'JupyterLab extension jupyterlab_tabular_data_viewer_extension is activated!'
+    );
 
     const { docRegistry, commands, contextMenu } = app;
 

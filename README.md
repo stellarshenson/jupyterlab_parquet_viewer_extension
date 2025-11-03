@@ -10,6 +10,10 @@ View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Doubl
 
 ![Parquet Viewer](.resources/screenshot.png)
 
+**Opening files:** Right-click any supported file and select "Tabular Data Viewer" from the "Open With" menu, or simply double-click to open with the default viewer.
+
+![Open With Menu](.resources/screenshot-menu.png)
+
 ## Features
 
 **Supported File Formats:**
@@ -58,10 +62,12 @@ pip uninstall jupyterlab_tabular_data_viewer_extension
 Configure file type support through JupyterLab Settings:
 
 1. Open **Settings → Settings Editor**
-2. Search for "Parquet Viewer Extension"
+2. Search for "Tabular Data Viewer Extension"
 3. Configure options:
    - **Enable Parquet files** - Default: enabled
-   - **Enable Excel files** - Default: disabled (enable to view .xlsx files)
+   - **Enable Excel files** - Default: enabled
+   - **Enable CSV files** - Default: enabled
+   - **Enable TSV files** - Default: enabled
 
 When a file type is disabled, files open with JupyterLab's default handler instead.
 

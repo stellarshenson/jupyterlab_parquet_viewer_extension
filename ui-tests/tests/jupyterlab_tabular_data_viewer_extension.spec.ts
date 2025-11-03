@@ -40,7 +40,8 @@ test.describe('Tabular Data Viewer Extension', () => {
   });
 
   test('should open and display Parquet file', async ({ page }) => {
-    // Open the file browser
+    // Wait for File Browser to be available and click it
+    await page.waitForSelector('[title="File Browser"]', { timeout: 30000 });
     await page.click('[title="File Browser"]');
 
     // Wait for file to be visible
@@ -67,7 +68,8 @@ test.describe('Tabular Data Viewer Extension', () => {
   });
 
   test('should open and display CSV file', async ({ page }) => {
-    // Open the file browser
+    // Wait for File Browser to be available and click it
+    await page.waitForSelector('[title="File Browser"]', { timeout: 30000 });
     await page.click('[title="File Browser"]');
 
     // Wait for file to be visible
@@ -94,7 +96,8 @@ test.describe('Tabular Data Viewer Extension', () => {
   });
 
   test('should open and display Excel file', async ({ page }) => {
-    // Open the file browser
+    // Wait for File Browser to be available and click it
+    await page.waitForSelector('[title="File Browser"]', { timeout: 30000 });
     await page.click('[title="File Browser"]');
 
     // Wait for file to be visible
@@ -124,7 +127,8 @@ test.describe('Tabular Data Viewer Extension', () => {
     const fileTypes = ['sample_data.parquet', 'sample_data.csv', 'sample_data.xlsx'];
 
     for (const fileName of fileTypes) {
-      // Open the file browser
+      // Wait for File Browser to be available and click it
+      await page.waitForSelector('[title="File Browser"]', { timeout: 30000 });
       await page.click('[title="File Browser"]');
 
       // Wait for file to be visible

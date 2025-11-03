@@ -1,16 +1,47 @@
 import { expect, galata, test } from '@jupyterlab/galata';
+import * as path from 'path';
 
 test.describe('Tabular Data Viewer Extension', () => {
+  // Upload test data files before running tests
+  test.beforeAll(async ({ request, tmpPath }) => {
+    const contents = galata.newContentsHelper(request);
+
+    // Path to test data files (relative to project root)
+    const dataDir = path.resolve(__dirname, '..', '..', 'data');
+
+    // Upload each test file
+    const testFiles = ['sample_data.parquet', 'sample_data.csv', 'sample_data.xlsx'];
+    for (const filename of testFiles) {
+      const filePath = path.join(dataDir, filename);
+      await contents.uploadFile(
+        filePath,
+        filename,
+        tmpPath
+      );
+    }
+  });
+
   test.beforeEach(async ({ page }) => {
     await page.goto();
+  });
+
+  test('should emit an activation console message', async ({ page }) => {
+    const logs: string[] = [];
+
+    page.on('console', message => {
+      logs.push(message.text());
+    });
+
+    await page.goto();
+
+    expect(
+      logs.filter(s => s === 'JupyterLab extension jupyterlab_tabular_data_viewer_extension is activated!')
+    ).toHaveLength(1);
   });
 
   test('should open and display Parquet file', async ({ page }) => {
     // Open the file browser
     await page.click('[title="File Browser"]');
-
-    // Navigate to data folder
-    await page.dblclick('text=data');
 
     // Wait for file to be visible
     await page.waitForSelector('text=sample_data.parquet', { timeout: 10000 });
@@ -39,9 +70,6 @@ test.describe('Tabular Data Viewer Extension', () => {
     // Open the file browser
     await page.click('[title="File Browser"]');
 
-    // Navigate to data folder
-    await page.dblclick('text=data');
-
     // Wait for file to be visible
     await page.waitForSelector('text=sample_data.csv', { timeout: 10000 });
 
@@ -68,9 +96,6 @@ test.describe('Tabular Data Viewer Extension', () => {
   test('should open and display Excel file', async ({ page }) => {
     // Open the file browser
     await page.click('[title="File Browser"]');
-
-    // Navigate to data folder
-    await page.dblclick('text=data');
 
     // Wait for file to be visible
     await page.waitForSelector('text=sample_data.xlsx', { timeout: 10000 });
@@ -101,12 +126,6 @@ test.describe('Tabular Data Viewer Extension', () => {
     for (const fileName of fileTypes) {
       // Open the file browser
       await page.click('[title="File Browser"]');
-
-      // Navigate to data folder if not already there
-      const dataFolder = await page.locator('text=data').first();
-      if (await dataFolder.isVisible()) {
-        await dataFolder.dblclick();
-      }
 
       // Wait for file to be visible
       await page.waitForSelector(`text=${fileName}`, { timeout: 10000 });

@@ -6,7 +6,7 @@
 [![Total PyPI downloads](https://static.pepy.tech/badge/jupyterlab-tabular-data-viewer-extension)](https://pepy.tech/project/jupyterlab-tabular-data-viewer-extension)
 ![JL4 Ready](https://img.shields.io/badge/Jupyterlab%204-ready-blue)
 
-View and browse Parquet and Excel files directly in JupyterLab. Double-click any .parquet or .xlsx file to open it in a simple, spreadsheet-like table view - no code required. Navigate through your data, inspect values, and explore the structure of your tabular data files with interactive column resizing and advanced filtering capabilities.
+View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Double-click any .parquet, .xlsx, .csv, or .tsv file to open it in a simple, spreadsheet-like table view - no code required. Navigate through your data, inspect values, and explore the structure of your tabular data files with interactive column resizing and advanced filtering capabilities.
 
 ![Parquet Viewer](.resources/screenshot.png)
 
@@ -15,6 +15,8 @@ View and browse Parquet and Excel files directly in JupyterLab. Double-click any
 **Supported File Formats:**
 - **Parquet files** (.parquet) - Full support with efficient columnar data reading
 - **Excel files** (.xlsx) - Reads first worksheet only. Excel files must be simple tabular data without merged cells, complex formulas, or advanced formatting. Files with these features may not display correctly or fail to load
+- **CSV files** (.csv) - Comma-separated values with UTF-8 encoding (fallback to latin1)
+- **TSV files** (.tsv) - Tab-separated values with UTF-8 encoding (fallback to latin1)
 
 **Core viewing and navigation:**
 - Simple table display showing your data in familiar spreadsheet format
@@ -35,8 +37,8 @@ View and browse Parquet and Excel files directly in JupyterLab. Double-click any
 
 **Additional features:**
 - Right-click context menu on rows to copy data as JSON
-- Configurable file type support via Settings - Enable/disable Parquet or Excel handling
-- All features work seamlessly across both Parquet and Excel files
+- Configurable file type support via Settings - Enable/disable Parquet, Excel, or CSV/TSV handling
+- All features work seamlessly across all supported file formats
 
 ## Installation
 

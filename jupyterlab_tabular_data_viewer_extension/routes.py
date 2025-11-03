@@ -34,6 +34,10 @@ def get_file_type(file_path):
         return 'parquet'
     elif ext in ['.xlsx', '.xls']:
         return 'excel'
+    elif ext == '.csv':
+        return 'csv'
+    elif ext == '.tsv':
+        return 'tsv'
     else:
         return 'unknown'
 
@@ -50,6 +54,24 @@ def read_excel_as_arrow_table(file_path):
         return table
     except Exception as e:
         raise Exception(f"Failed to read Excel file: {str(e)}. Ensure the file is a valid Excel file and openpyxl is installed.")
+
+
+def read_csv_as_arrow_table(file_path, delimiter=','):
+    """Read CSV/TSV file and convert to PyArrow Table"""
+    try:
+        # Read CSV with pandas, handling various encodings
+        # Try UTF-8 first, fall back to latin1 if that fails
+        try:
+            df = pd.read_csv(file_path, delimiter=delimiter, encoding='utf-8')
+        except UnicodeDecodeError:
+            df = pd.read_csv(file_path, delimiter=delimiter, encoding='latin1')
+
+        # Convert pandas DataFrame to PyArrow Table
+        table = pa.Table.from_pandas(df)
+
+        return table
+    except Exception as e:
+        raise Exception(f"Failed to read CSV file: {str(e)}. Ensure the file is a valid CSV file.")
 
 
 class ParquetMetadataHandler(APIHandler):
@@ -111,6 +133,40 @@ class ParquetMetadataHandler(APIHandler):
             elif file_type == 'excel':
                 # Read Excel file metadata
                 table = read_excel_as_arrow_table(str(abs_path))
+                schema = table.schema
+
+                # Extract column information
+                columns = []
+                for i in range(len(schema)):
+                    field = schema.field(i)
+                    columns.append({
+                        'name': field.name,
+                        'type': str(field.type)
+                    })
+
+                # Get total row count
+                total_rows = len(table)
+
+            elif file_type == 'csv':
+                # Read CSV file metadata
+                table = read_csv_as_arrow_table(str(abs_path), delimiter=',')
+                schema = table.schema
+
+                # Extract column information
+                columns = []
+                for i in range(len(schema)):
+                    field = schema.field(i)
+                    columns.append({
+                        'name': field.name,
+                        'type': str(field.type)
+                    })
+
+                # Get total row count
+                total_rows = len(table)
+
+            elif file_type == 'tsv':
+                # Read TSV file metadata
+                table = read_csv_as_arrow_table(str(abs_path), delimiter='\t')
                 schema = table.schema
 
                 # Extract column information
@@ -203,6 +259,12 @@ class ParquetDataHandler(APIHandler):
             elif file_type == 'excel':
                 self.log.debug(f"Reading excel file: {abs_path}")
                 table = read_excel_as_arrow_table(str(abs_path))
+            elif file_type == 'csv':
+                self.log.debug(f"Reading CSV file: {abs_path}")
+                table = read_csv_as_arrow_table(str(abs_path), delimiter=',')
+            elif file_type == 'tsv':
+                self.log.debug(f"Reading TSV file: {abs_path}")
+                table = read_csv_as_arrow_table(str(abs_path), delimiter='\t')
             else:
                 self.set_status(400)
                 self.finish(json.dumps({'error': f'Unsupported file type: {file_type}'}))

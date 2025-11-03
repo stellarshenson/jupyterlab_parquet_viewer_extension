@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.1.18] - 2025-11-02
+
+### Added
+
+- **CSV and TSV File Support**: Implemented comprehensive support for comma-separated and tab-separated value files
+  - Added CSV (.csv) file type registration with text-based document handling
+  - Added TSV (.tsv) file type registration with tab delimiter support
+  - Created `read_csv_as_arrow_table()` function in backend with pandas CSV reader
+  - Implemented automatic encoding detection (UTF-8 with fallback to latin1)
+  - Updated `get_file_type()` to recognize CSV and TSV extensions
+  - Added separate text factory for CSV/TSV files (uses `modelName: 'text'`)
+  - All existing features work seamlessly with CSV/TSV: progressive loading, filtering, sorting, column resizing, context menu
+  - Added `enableCSV` setting to control CSV/TSV file handling (enabled by default)
+  - Updated schema with CSV/TSV configuration option
+
+### Changed
+
+- Updated frontend to create separate factories for binary files (Parquet, Excel) and text files (CSV, TSV)
+- Updated metadata and data handlers to support CSV and TSV file formats
+- Updated package.json description and keywords to include CSV and TSV
+- Updated README.md to document CSV and TSV support in supported file formats section
+- Updated schema description to include CSV and TSV files
+
 ## [1.1.17] - 2025-11-02
 
 ### Changed

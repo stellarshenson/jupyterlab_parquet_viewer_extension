@@ -59,6 +59,7 @@ class TabularDataWidgetFactory extends ABCWidgetFactory<
 interface ISettings {
   enableParquet: boolean;
   enableExcel: boolean;
+  enableCSV: boolean;
 }
 
 /**
@@ -84,7 +85,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Load settings
     let settings: ISettings = {
       enableParquet: true,
-      enableExcel: false
+      enableExcel: false,
+      enableCSV: true
     };
 
     console.log('[Tabular Data Viewer] Default settings:', settings);
@@ -139,6 +141,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     console.log('[Tabular Data Viewer] Starting file type registration...');
     console.log('[Tabular Data Viewer] Current settings state:', settings);
     const binaryFileTypes: string[] = [];
+    const textFileTypes: string[] = [];
 
     // Register Parquet file type if enabled
     if (settings.enableParquet) {
@@ -178,11 +181,46 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
     }
 
+    // Register CSV and TSV file types if enabled
+    if (settings.enableCSV) {
+      try {
+        docRegistry.addFileType({
+          name: 'csv-tabular-viewer',
+          displayName: 'CSV (Tabular Viewer)',
+          extensions: ['.csv'],
+          mimeTypes: ['text/csv'],
+          iconClass: 'jp-MaterialIcon jp-SpreadsheetIcon',
+          contentType: 'file',
+          fileFormat: 'text'
+        });
+        textFileTypes.push('csv-tabular-viewer');
+        console.log('[Tabular Data Viewer] CSV file type registered');
+      } catch (e) {
+        console.warn('[Tabular Data Viewer] CSV file type already registered', e);
+      }
+
+      try {
+        docRegistry.addFileType({
+          name: 'tsv-tabular-viewer',
+          displayName: 'TSV (Tabular Viewer)',
+          extensions: ['.tsv'],
+          mimeTypes: ['text/tab-separated-values'],
+          iconClass: 'jp-MaterialIcon jp-SpreadsheetIcon',
+          contentType: 'file',
+          fileFormat: 'text'
+        });
+        textFileTypes.push('tsv-tabular-viewer');
+        console.log('[Tabular Data Viewer] TSV file type registered');
+      } catch (e) {
+        console.warn('[Tabular Data Viewer] TSV file type already registered', e);
+      }
+    }
+
     // Create binary factory for Parquet and Excel files
     if (binaryFileTypes.length > 0) {
       const binaryFactory = new TabularDataWidgetFactory(
         {
-          name: 'Tabular Data Viewer',
+          name: 'Tabular Data Viewer (Binary)',
           modelName: 'base64',
           fileTypes: binaryFileTypes,
           defaultFor: binaryFileTypes,
@@ -199,7 +237,32 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
       docRegistry.addWidgetFactory(binaryFactory);
       console.log(`[Tabular Data Viewer] Binary factory registered for: ${binaryFileTypes.join(', ')}`);
-    } else {
+    }
+
+    // Create text factory for CSV and TSV files
+    if (textFileTypes.length > 0) {
+      const textFactory = new TabularDataWidgetFactory(
+        {
+          name: 'Tabular Data Viewer (Text)',
+          modelName: 'text',
+          fileTypes: textFileTypes,
+          defaultFor: textFileTypes,
+          defaultRendered: textFileTypes,
+          readOnly: true
+        },
+        (row: any) => {
+          lastContextMenuRow = row;
+        },
+        (widget: TabularDataViewer) => {
+          activeWidget = widget;
+        }
+      );
+
+      docRegistry.addWidgetFactory(textFactory);
+      console.log(`[Tabular Data Viewer] Text factory registered for: ${textFileTypes.join(', ')}`);
+    }
+
+    if (binaryFileTypes.length === 0 && textFileTypes.length === 0) {
       console.warn('[Tabular Data Viewer] No file types enabled in settings');
     }
   }

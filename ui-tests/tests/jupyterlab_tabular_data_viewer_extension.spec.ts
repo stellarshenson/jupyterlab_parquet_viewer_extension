@@ -2,26 +2,18 @@ import { expect, galata, test } from '@jupyterlab/galata';
 import * as path from 'path';
 
 test.describe('Tabular Data Viewer Extension', () => {
-  // Upload test data files before running tests
-  test.beforeAll(async ({ request, tmpPath }) => {
+  test.beforeEach(async ({ page, request, tmpPath }) => {
+    // Upload test data files for this test
     const contents = galata.newContentsHelper(request);
-
-    // Path to test data files (relative to project root)
     const dataDir = path.resolve(__dirname, '..', '..', 'data');
-
-    // Upload each test file
     const testFiles = ['sample_data.parquet', 'sample_data.csv', 'sample_data.xlsx'];
+
     for (const filename of testFiles) {
       const filePath = path.join(dataDir, filename);
-      await contents.uploadFile(
-        filePath,
-        filename,
-        tmpPath
-      );
+      await contents.uploadFile(filePath, filename, tmpPath);
     }
-  });
 
-  test.beforeEach(async ({ page }) => {
+    // Navigate to JupyterLab
     await page.goto();
 
     // Wait for JupyterLab to be fully loaded

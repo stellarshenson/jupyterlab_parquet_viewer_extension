@@ -95,7 +95,7 @@ export class ColumnStatsModal extends Widget {
         items.push(`Std Dev: ${this._formatNumber(this._stats.std_dev)}`);
       }
       if (this._stats.outlier_count !== undefined) {
-        items.push(`Outliers (IQR×1.5): ${this._formatNumber(this._stats.outlier_count)} (${this._stats.outlier_percentage}%)`);
+        items.push(`Outliers: ${this._formatNumber(this._stats.outlier_count)} (${this._stats.outlier_percentage}%)`);
       }
 
       numericList.innerHTML = items.map(item => `<li>${item}</li>`).join('');

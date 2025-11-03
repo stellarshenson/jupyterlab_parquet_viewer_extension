@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Click icon to open modal dialog with comprehensive statistics
   - Data summary section - total rows, non-null count/percentage, null count/percentage, unique values count/percentage
   - Type-specific statistics:
-    - Numeric (int/float) - min, max, mean, median, standard deviation, outlier detection using IQR×1.5 method with count and percentage
+    - Numeric (int/float) - min, max, mean, median, standard deviation, outlier detection with count and percentage
     - String - most common value with count, minimum/maximum/average string length in characters
     - Date/datetime - earliest date, latest date, date range span in days
   - Copy Stats as JSON button with clipboard API integration and visual feedback ("Copied!" confirmation)

@@ -58,8 +58,14 @@ test.describe('Tabular Data Viewer Extension', () => {
     // Wait for file to be visible in file browser
     await page.waitForSelector('text=sample_data.csv', { timeout: 10000 });
 
-    // Open the CSV file
-    await page.dblclick('text=sample_data.csv');
+    // Right-click on the CSV file to open context menu
+    await page.click('text=sample_data.csv', { button: 'right' });
+
+    // Wait for context menu to appear and click "Open With" -> "Tabular Data Viewer"
+    await page.waitForSelector('.lm-Menu-content', { timeout: 5000 });
+    await page.click('text=Open With');
+    await page.waitForSelector('text=Tabular Data Viewer', { timeout: 5000 });
+    await page.click('text=Tabular Data Viewer');
 
     // Verify the viewer opens and is visible in the main area
     await page.waitForSelector('.jp-MainAreaWidget:not(.lm-mod-hidden) .jp-TabularDataViewer', {
@@ -89,8 +95,18 @@ test.describe('Tabular Data Viewer Extension', () => {
       // Wait for file to be visible in file browser
       await page.waitForSelector(`text=${fileName}`, { timeout: 10000 });
 
-      // Open the file
-      await page.dblclick(`text=${fileName}`);
+      // Open the file - use explicit "Open With" for CSV
+      if (fileName.includes('.csv')) {
+        // Right-click to open context menu
+        await page.click(`text=${fileName}`, { button: 'right' });
+        await page.waitForSelector('.lm-Menu-content', { timeout: 5000 });
+        await page.click('text=Open With');
+        await page.waitForSelector('text=Tabular Data Viewer', { timeout: 5000 });
+        await page.click('text=Tabular Data Viewer');
+      } else {
+        // Double-click for other file types
+        await page.dblclick(`text=${fileName}`);
+      }
 
       // Verify the viewer opens and is visible in the main area
       await page.waitForSelector('.jp-MainAreaWidget:not(.lm-mod-hidden) .jp-TabularDataViewer', {

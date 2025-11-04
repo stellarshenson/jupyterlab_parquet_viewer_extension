@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.2.30] - 2025-11-04
+
+### Fixed
+
+- **Column Resize Index Offset**: Fixed off-by-one error when resizing columns
+  - Column resize was targeting wrong columns after row number column addition
+  - Row number column is first DOM child but not in `_columns` array
+  - Added +1 offset when accessing `headerRow` and `filterRow` children
+  - Fixed table width calculation to include 60px row number column
+
+- **CI/CD Build Failures**: Resolved dependency lock file conflicts
+  - Removed `package-lock.json` (using yarn/jlpm exclusively)
+  - Regenerated clean `yarn.lock` with fresh `jlpm install`
+  - Fixes post-resolution validation errors in CI pipeline
+
+### Changed
+
+- **Info Icon**: Replaced unicode character with Font Awesome icon
+  - Switched from unicode '🛈' to Font Awesome's `fa-info-circle`
+  - Added Font Awesome CSS import for consistent cross-platform rendering
+  - Updated CSS to use opacity transitions for smoother fade effect
+  - Reduced icon size to 14px for better proportions
+
+- **Documentation**: Updated RELEASE.md with version 1.2 feature summary
+  - Added "What's New in Version 1.2" section documenting major features
+  - Column Statistics Modal (1.2.8) overview
+  - Absolute Row Indices (1.2.20) explanation
+  - Enhanced Row Number Column Styling (1.2.20) details
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## [1.2.20] - 2025-11-04
 
 **Tag**: RELEASE_1.2.20

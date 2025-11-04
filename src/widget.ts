@@ -517,8 +517,9 @@ export class TabularDataViewer extends Widget {
     // With table-layout: fixed, this automatically applies to all cells in the column
     const columnIndex = this._columns.findIndex(col => col.name === this._resizing!.columnName);
     if (columnIndex !== -1) {
-      const headerCell = this._headerRow.children[columnIndex] as HTMLElement;
-      const filterCell = this._filterRow.children[columnIndex] as HTMLElement;
+      // Add 1 to account for row number column being first cell
+      const headerCell = this._headerRow.children[columnIndex + 1] as HTMLElement;
+      const filterCell = this._filterRow.children[columnIndex + 1] as HTMLElement;
 
       if (headerCell) {
         headerCell.style.width = `${newWidth}px`;
@@ -527,8 +528,8 @@ export class TabularDataViewer extends Widget {
         filterCell.style.width = `${newWidth}px`;
       }
 
-      // Update table width to sum of all column widths
-      const totalWidth = Array.from(this._columnWidths.values()).reduce((sum, w) => sum + w, 0);
+      // Update table width to sum of all column widths plus row number column (60px)
+      const totalWidth = Array.from(this._columnWidths.values()).reduce((sum, w) => sum + w, 0) + 60;
       this._table.style.width = `${totalWidth}px`;
     }
   };

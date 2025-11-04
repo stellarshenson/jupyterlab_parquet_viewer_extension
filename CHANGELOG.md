@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.2.20] - 2025-11-04
+
+### Fixed
+
+- **Row Index Display**: Row numbers now show absolute position in original file instead of view-relative position
+  - Previously, when filters or sorting were applied, row numbers would restart from 1 (showing position in filtered view)
+  - Backend now tracks original row indices throughout filtering and sorting operations
+  - Added internal `__original_row_index__` column to maintain absolute position through all transformations
+  - Frontend displays these absolute indices, making it easy to identify exact row location in source file
+  - Context menu "Copy Row as JSON" excludes internal `__row_index__` metadata field
+  - Affects all file types (Parquet, CSV, TSV, Excel)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## [1.2.8] - 2025-11-03
 
 **Tag**: RELEASE_1.2.8

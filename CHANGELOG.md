@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Context menu "Copy Row as JSON" excludes internal `__row_index__` metadata field
   - Affects all file types (Parquet, CSV, TSV, Excel)
 
+### Changed
+
+- **Row Number Column Styling**: Enhanced visual separation with borders
+  - Added vertical right border to separate row numbers from data columns
+  - Added horizontal borders between rows in row number column for improved readability
+  - Borders use `var(--jp-border-color0)` for subtle, consistent appearance
+  - Borders scoped to data rows only (tbody), excluding filter and header rows for clean appearance
+
 <!-- <END NEW CHANGELOG ENTRY> -->
 
 ## [1.2.8] - 2025-11-03

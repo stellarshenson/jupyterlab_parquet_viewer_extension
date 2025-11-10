@@ -728,6 +728,11 @@ export class TabularDataViewer extends Widget {
       const columnName = header.dataset.columnName;
       const indicator = header.querySelector('.jp-TabularDataViewer-sortIndicator') as HTMLElement;
 
+      // Skip if no indicator (e.g., row number column)
+      if (!indicator) {
+        return;
+      }
+
       if (columnName === this._sortBy) {
         indicator.textContent = this._sortOrder === 'asc' ? ' ▲' : ' ▼';
       } else {

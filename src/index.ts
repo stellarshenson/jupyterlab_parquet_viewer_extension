@@ -133,8 +133,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
       const originalExecute = existingCommand.execute;
 
       existingCommand.execute = async (args?: any) => {
-        // If active widget is tabular data viewer, use our refresh
-        if (activeWidget) {
+        // Check if current widget is a tabular data viewer
+        const currentWidget = app.shell.currentWidget;
+        if (currentWidget && activeWidget &&
+            currentWidget.node.contains(activeWidget.node)) {
+          // Current widget contains our tabular viewer, use our refresh
           await activeWidget.refresh();
         } else {
           // Otherwise, fall back to original behavior
@@ -147,10 +150,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
         label: 'Refresh View',
         caption: 'Refresh the current document view',
         isEnabled: () => {
-          return activeWidget !== null;
+          // Enable for any document (let the refresh view extension handle this)
+          return true;
         },
         execute: async () => {
-          if (activeWidget) {
+          const currentWidget = app.shell.currentWidget;
+          if (currentWidget && activeWidget &&
+              currentWidget.node.contains(activeWidget.node)) {
             await activeWidget.refresh();
           }
         }

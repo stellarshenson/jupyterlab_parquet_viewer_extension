@@ -52,6 +52,9 @@ View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Doubl
 **Additional features:**
 - Column statistics modal - View comprehensive statistics including data type, row counts, null values, unique counts, and type-specific metrics (numeric: min/max/mean/median/std dev/outliers; string: most common value/length stats; date: earliest/latest dates). Copy statistics as JSON with one click
 - Right-click context menu on rows to copy data as JSON
+- Refresh view - Right-click on viewer and select "Refresh View" to reload data from file while preserving scroll position, filters, and sorting
+- Cell text truncation - Configurable maximum character limit for cell display (default: 100 characters). Text longer than limit shows "..." ellipsis. Set to 0 for unlimited display
+- Absolute row indices - Row numbers always show original file position, even with active filters or sorting
 - Configurable file type support via Settings - Enable/disable Parquet, Excel, or CSV/TSV handling
 - All features work seamlessly across all supported file formats
 
@@ -70,7 +73,7 @@ pip uninstall jupyterlab_tabular_data_viewer_extension
 
 ## Configuration
 
-Configure file type support through JupyterLab Settings:
+Configure extension behavior through JupyterLab Settings:
 
 1. Open **Settings → Settings Editor**
 2. Search for "Tabular Data Viewer Extension"
@@ -79,6 +82,7 @@ Configure file type support through JupyterLab Settings:
    - **Enable Excel files** - Default: enabled
    - **Enable CSV files** - Default: enabled
    - **Enable TSV files** - Default: enabled
+   - **Maximum Cell Characters** - Default: 100. Maximum characters to display in a cell before truncating with "...". Set to 0 for unlimited display
 
 When a file type is disabled, files open with JupyterLab's default handler instead.
 

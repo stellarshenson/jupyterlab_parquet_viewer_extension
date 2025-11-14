@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.3.0] - 2025-11-14
+
+**Tag**: RELEASE_1.3.0
+
+### Summary
+
+Minor version bump consolidating recent feature additions and improvements. This release introduces configurable cell text truncation, unified refresh view integration, enhanced sorting indicators, and absolute row indexing.
+
+### Added
+
+- **Cell Text Truncation Setting**: Configurable maximum character limit for cell display (v1.2.41)
+  - New `maxCellCharacters` setting (default: 100, set to 0 for unlimited)
+  - Text longer than limit truncated with "..." ellipsis
+  - Display-only truncation, original data unchanged
+  - Configurable via Settings Editor
+
+- **Absolute Row Indices**: Row numbers show original file position (v1.2.20)
+  - Row numbers persist correctly through filtering and sorting
+  - Backend tracks original indices with `__original_row_index__` column
+  - Frontend displays absolute position regardless of view state
+
+### Changed
+
+- **Refresh View Integration**: Unified refresh command (v1.2.42-1.2.45)
+  - Overrides `jupyterlab_refresh_view:refresh` for tabular viewers
+  - Falls back to original behavior for other document types
+  - Eliminates duplicate context menu items
+  - Preserves scroll position, filters, and sorting during refresh
+
+- **Sort Indicator Position**: Repositioned to right bottom corner (v1.2.35)
+  - Absolutely positioned (right: 8px, bottom: 4px)
+  - Increased size to 16px bold for better visibility
+  - No impact on header layout or dimensions
+
+### Fixed
+
+- **Context Menu Display**: Restored refresh view menu item (v1.2.43-1.2.45)
+  - Added explicit context menu registration for tabular viewers
+  - Checks current widget before applying tabular-specific refresh
+  - Works correctly with refresh view extension load order
+
+- **Column Resize Bug**: Fixed off-by-one error (v1.2.30)
+  - Row number column accounted for in resize calculations
+  - Added +1 offset when accessing headerRow/filterRow children
+
+- **Sorting Regression**: Fixed null reference error (v1.2.33)
+  - Added null check for sort indicators in row number column
+  - Reduced resize handle width from 24px to 16px
+
 ## [1.2.42] - 2025-11-14
 
 **Tag**: RELEASE_1.2.42

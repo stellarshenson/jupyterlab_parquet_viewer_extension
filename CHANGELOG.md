@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.2.41] - 2025-11-14
+
+**Tag**: RELEASE_1.2.41
+
+### Added
+
+- **Cell Text Truncation Setting**: Added configurable maximum cell character limit
+  - New `maxCellCharacters` setting in extension settings (default: 100 characters)
+  - Text longer than limit is truncated with "..." ellipsis in display only
+  - Set to 0 for unlimited text display
+  - Original data unchanged - truncation is visual only
+  - Settings: Advanced Settings Editor → Tabular Data Viewer Extension → Maximum Cell Characters
+
 ## [1.2.35] - 2025-11-10
 
 **Tag**: RELEASE_1.2.35

@@ -56,11 +56,13 @@ export class TabularDataViewer extends Widget {
   private _setLastContextMenuRow: (row: any) => void;
   private _cleanupHighlight: (() => void) | null = null;
   private _menuObserver: MutationObserver | null = null;
+  private _maxCellCharacters: number = 100;
 
-  constructor(filePath: string, setLastContextMenuRow: (row: any) => void) {
+  constructor(filePath: string, setLastContextMenuRow: (row: any) => void, maxCellCharacters: number = 100) {
     super();
     this._filePath = filePath;
     this._setLastContextMenuRow = setLastContextMenuRow;
+    this._maxCellCharacters = maxCellCharacters;
     this.addClass('jp-TabularDataViewer');
 
     // Create table container (scrollable)
@@ -449,6 +451,16 @@ export class TabularDataViewer extends Widget {
   }
 
   /**
+   * Truncate text to max characters with ellipsis
+   */
+  private _truncateText(text: string): string {
+    if (this._maxCellCharacters === 0 || text.length <= this._maxCellCharacters) {
+      return text;
+    }
+    return text.substring(0, this._maxCellCharacters) + '...';
+  }
+
+  /**
    * Render data rows
    */
   private _renderData(rows: any[]): void {
@@ -466,7 +478,8 @@ export class TabularDataViewer extends Widget {
         const td = document.createElement('td');
         td.className = 'jp-TabularDataViewer-cell';
         const value = row[col.name];
-        td.textContent = value !== null && value !== undefined ? String(value) : '';
+        const textValue = value !== null && value !== undefined ? String(value) : '';
+        td.textContent = this._truncateText(textValue);
         tr.appendChild(td);
       });
 

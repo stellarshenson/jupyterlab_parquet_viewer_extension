@@ -22,15 +22,18 @@ class TabularDataWidgetFactory extends ABCWidgetFactory<
 > {
   private _setLastContextMenuRow: (row: any) => void;
   private _setActiveWidget: (widget: TabularDataViewer) => void;
+  private _getSettings: () => ISettings;
 
   constructor(
     options: DocumentRegistry.IWidgetFactoryOptions,
     setLastContextMenuRow: (row: any) => void,
-    setActiveWidget: (widget: TabularDataViewer) => void
+    setActiveWidget: (widget: TabularDataViewer) => void,
+    getSettings: () => ISettings
   ) {
     super(options);
     this._setLastContextMenuRow = setLastContextMenuRow;
     this._setActiveWidget = setActiveWidget;
+    this._getSettings = getSettings;
   }
 
   /**
@@ -42,7 +45,8 @@ class TabularDataWidgetFactory extends ABCWidgetFactory<
     // console.log(`[Tabular Data Viewer] Creating widget for file: ${context.path}`);
     // console.log(`[Tabular Data Viewer] File type: ${context.contentsModel?.type}, Format: ${context.contentsModel?.format}`);
 
-    const content = new TabularDataViewer(context.path, this._setLastContextMenuRow);
+    const settings = this._getSettings();
+    const content = new TabularDataViewer(context.path, this._setLastContextMenuRow, settings.maxCellCharacters);
     const widget = new TabularDataDocument({ content, context });
     widget.title.label = context.path.split('/').pop() || 'Tabular Data File';
 
@@ -67,6 +71,7 @@ interface ISettings {
   enableExcel: boolean;
   enableCSV: boolean;
   enableTSV: boolean;
+  maxCellCharacters: number;
 }
 
 /**
@@ -94,7 +99,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
       enableParquet: true,
       enableExcel: true,
       enableCSV: true,
-      enableTSV: true
+      enableTSV: true,
+      maxCellCharacters: 100
     };
 
     // console.log('[Tabular Data Viewer] Default settings:', settings);
@@ -267,7 +273,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
         },
         (widget: TabularDataViewer) => {
           activeWidget = widget;
-        }
+        },
+        () => settings
       );
 
       docRegistry.addWidgetFactory(binaryFactory);
@@ -290,7 +297,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
         },
         (widget: TabularDataViewer) => {
           activeWidget = widget;
-        }
+        },
+        () => settings
       );
 
       docRegistry.addWidgetFactory(textFactory);

@@ -26,6 +26,13 @@
       "description": "Use this extension to view .tsv files",
       "type": "boolean",
       "default": true
+    },
+    "maxCellCharacters": {
+      "title": "Maximum Cell Characters",
+      "description": "Maximum number of characters to display in a cell before truncating with '...'. Set to 0 for no limit.",
+      "type": "number",
+      "default": 100,
+      "minimum": 0
     }
   },
   "additionalProperties": false

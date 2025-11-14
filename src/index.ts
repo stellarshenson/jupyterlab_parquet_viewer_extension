@@ -122,20 +122,40 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // console.log('[Tabular Data Viewer] Using default settings:', settings);
     }
 
-    // Command to refresh tabular data view
-    const refreshCommand = 'tabular-data-viewer:refresh';
-    commands.addCommand(refreshCommand, {
-      label: 'Refresh Tabular Data',
-      caption: 'Refresh the tabular data view from file',
-      isEnabled: () => {
-        return activeWidget !== null;
-      },
-      execute: async () => {
+    // Override the refresh view extension command for tabular data viewers
+    // This replaces the generic "Refresh View" with tabular-specific refresh
+    const refreshCommand = 'jupyterlab_refresh_view:refresh';
+
+    // Override with tabular data specific implementation
+    if (commands.hasCommand(refreshCommand)) {
+      // Command already exists, we need to update it
+      const existingCommand = (commands as any)._commands.get(refreshCommand);
+      const originalExecute = existingCommand.execute;
+
+      existingCommand.execute = async (args?: any) => {
+        // If active widget is tabular data viewer, use our refresh
         if (activeWidget) {
           await activeWidget.refresh();
+        } else {
+          // Otherwise, fall back to original behavior
+          await originalExecute.call(existingCommand, args);
         }
-      }
-    });
+      };
+    } else {
+      // Command doesn't exist yet, create it
+      commands.addCommand(refreshCommand, {
+        label: 'Refresh View',
+        caption: 'Refresh the current document view',
+        isEnabled: () => {
+          return activeWidget !== null;
+        },
+        execute: async () => {
+          if (activeWidget) {
+            await activeWidget.refresh();
+          }
+        }
+      });
+    }
 
     // Command to copy row as JSON
     const copyRowCommand = 'tabular-data-viewer:copy-row-json';
@@ -161,12 +181,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
     });
 
-    // Add refresh command to context menu for tabular data viewer
-    contextMenu.addItem({
-      command: refreshCommand,
-      selector: '.jp-TabularDataViewer',
-      rank: 0
-    });
+    // Note: We don't add a separate context menu item for refresh because we're
+    // overriding the existing 'jupyterlab_refresh_view:refresh' command.
+    // The refresh view extension already adds this to the context menu.
 
     // Add to context menu for tabular data viewer rows
     contextMenu.addItem({

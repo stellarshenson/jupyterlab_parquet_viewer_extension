@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.2.42] - 2025-11-14
+
+**Tag**: RELEASE_1.2.42
+
+### Changed
+
+- **Refresh View Integration**: Override refresh view extension command instead of creating duplicate
+  - Now uses `jupyterlab_refresh_view:refresh` command ID directly
+  - When tabular data viewer is active, "Refresh View" context menu uses tabular-specific refresh
+  - Falls back to original refresh view behavior for other document types
+  - Eliminates duplicate "Refresh Tabular Data" and "Refresh View" context menu items
+  - Provides unified refresh experience across all document types
+
 ## [1.2.41] - 2025-11-14
 
 **Tag**: RELEASE_1.2.41

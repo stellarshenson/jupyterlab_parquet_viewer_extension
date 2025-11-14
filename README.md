@@ -7,7 +7,7 @@
 [![JupyterLab 4](https://img.shields.io/badge/JupyterLab-4-orange.svg)](https://jupyterlab.readthedocs.io/en/stable/)
 [![Brought To You By KOLOMOLO](https://img.shields.io/badge/Brought%20To%20You%20By-KOLOMOLO-00ffff?style=flat)](https://kolomolo.com)
 
-View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Double-click any .parquet, .xlsx, .csv, or .tsv file to open it in a simple, spreadsheet-like table view - no code required. Navigate through your data, inspect values, and explore the structure of your tabular data files with interactive column resizing and advanced filtering capabilities.
+View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Double-click any .parquet, .xlsx, .csv, or .tsv file to open it in a simple, spreadsheet-like table view - no code required (yes, really). Navigate through your data, inspect values, and explore the structure of your tabular data files with interactive column resizing and advanced filtering capabilities.
 
 ![Parquet Viewer](.resources/screenshot-table.png)
 
@@ -30,7 +30,7 @@ View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Doubl
 **Supported File Formats:**
 
 - **Parquet files** (.parquet) - Full support with efficient columnar data reading
-- **Excel files** (.xlsx) - Reads first worksheet only. Excel files must be simple tabular data without merged cells, complex formulas, or advanced formatting. Files with these features may not display correctly or fail to load
+- **Excel files** (.xlsx) - Reads first worksheet only (the other sheets are just jealous). Excel files must be simple tabular data without merged cells, complex formulas, or advanced formatting. Files with these features may not display correctly or fail to load
 - **CSV files** (.csv) - Comma-separated values with UTF-8 encoding (fallback to latin1)
 - **TSV files** (.tsv) - Tab-separated values with UTF-8 encoding (fallback to latin1)
 
@@ -39,9 +39,9 @@ View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Doubl
 - Simple table display showing your data in familiar spreadsheet format
 - Column headers with field names and simplified datatype indicators
 - Interactive column resizing - drag column borders to adjust width independently
-- Progressive loading - starts with 500 rows, automatically loads more as you scroll
+- Progressive loading - starts with 500 rows, automatically loads more as you scroll (your patience rewarded)
 - File statistics (column count, row count, file size) at a glance
-- Fixed status bar remains visible during horizontal scrolling
+- Fixed status bar remains visible during horizontal scrolling (because it got tired of moving)
 - Handles large files efficiently with server-side processing
 
 **Advanced filtering and sorting:**

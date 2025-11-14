@@ -11,8 +11,8 @@ jupyterlab_tabular_data_viewer_extension/labextension
 # Version file is handled by hatchling
 jupyterlab_tabular_data_viewer_extension/_version.py
 
-# Claude Code configuration
-.claude/
+# Claude Code configuration (except CLAUDE.md which should be committed)
+.claude/JOURNAL.md
 
 # Integration tests
 ui-tests/test-results/

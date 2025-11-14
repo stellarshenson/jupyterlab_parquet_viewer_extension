@@ -1,5 +1,5 @@
 import { Widget } from '@lumino/widgets';
-import { IColumnStats } from './request';
+import { IColumnStats, IUniqueValues } from './request';
 
 /**
  * Modal dialog widget for displaying column statistics
@@ -190,6 +190,223 @@ export class ColumnStatsModal extends Widget {
     } catch (error) {
       console.error('Failed to copy stats to clipboard:', error);
     }
+  }
+
+  /**
+   * Setup event listeners for closing the modal
+   */
+  private _setupEventListeners(): void {
+    // Close on ESC key
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        this.close();
+      }
+    };
+    document.addEventListener('keydown', handleKeydown);
+    this.disposed.connect(() => {
+      document.removeEventListener('keydown', handleKeydown);
+    });
+
+    // Close on backdrop click
+    this.node.addEventListener('click', (event: MouseEvent) => {
+      if (event.target === this.node) {
+        this.close();
+      }
+    });
+  }
+
+  /**
+   * Show the modal
+   */
+  show(): void {
+    Widget.attach(this, document.body);
+    this.node.focus();
+  }
+
+  /**
+   * Close and dispose the modal
+   */
+  close(): void {
+    this.dispose();
+  }
+}
+
+/**
+ * Modal dialog widget for filtering by unique values
+ */
+export class FilterModal extends Widget {
+  private _columnName: string;
+  private _uniqueValues: IUniqueValues;
+  private _selectedValues: Set<string>;
+  private _onApply: (values: string[] | null) => void;
+
+  constructor(
+    columnName: string,
+    uniqueValues: IUniqueValues,
+    currentFilter: string[],
+    onApply: (values: string[] | null) => void
+  ) {
+    super();
+    this._columnName = columnName;
+    this._uniqueValues = uniqueValues;
+    this._selectedValues = new Set(currentFilter);
+    this._onApply = onApply;
+    this.addClass('jp-FilterModal');
+    this._render();
+    this._setupEventListeners();
+  }
+
+  /**
+   * Render the modal content
+   */
+  private _render(): void {
+    const content = document.createElement('div');
+    content.className = 'jp-FilterModal-content';
+
+    // Header with column name and close button
+    const header = document.createElement('div');
+    header.className = 'jp-FilterModal-header';
+    const title = document.createElement('h3');
+    title.textContent = `Filter: ${this._columnName}`;
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'jp-FilterModal-close';
+    closeBtn.textContent = '×';
+    closeBtn.onclick = () => this.close();
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+    content.appendChild(header);
+
+    // Action buttons at top
+    const actionButtons = document.createElement('div');
+    actionButtons.className = 'jp-FilterModal-actionButtons';
+
+    const selectAllBtn = document.createElement('button');
+    selectAllBtn.className = 'jp-FilterModal-button';
+    selectAllBtn.textContent = 'Select All';
+    selectAllBtn.onclick = () => this._selectAll();
+
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'jp-FilterModal-button';
+    clearBtn.textContent = 'Clear';
+    clearBtn.onclick = () => this._clearAll();
+
+    actionButtons.appendChild(selectAllBtn);
+    actionButtons.appendChild(clearBtn);
+    content.appendChild(actionButtons);
+
+    // Values list container
+    const valuesContainer = document.createElement('div');
+    valuesContainer.className = 'jp-FilterModal-valuesContainer';
+
+    // Add info about total values
+    const info = document.createElement('div');
+    info.className = 'jp-FilterModal-info';
+    info.textContent = `${this._uniqueValues.values.length} unique values (showing max ${this._uniqueValues.limit})`;
+    valuesContainer.appendChild(info);
+
+    // Create checkboxes for each unique value
+    const valuesList = document.createElement('div');
+    valuesList.className = 'jp-FilterModal-valuesList';
+
+    this._uniqueValues.values.forEach((value, index) => {
+      const item = document.createElement('label');
+      item.className = 'jp-FilterModal-valueItem';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'jp-FilterModal-checkbox';
+      checkbox.dataset.value = value;
+      checkbox.checked = this._selectedValues.has(value);
+      checkbox.onchange = () => this._toggleValue(value, checkbox.checked);
+
+      const labelContainer = document.createElement('div');
+      labelContainer.className = 'jp-FilterModal-valueLabelContainer';
+
+      const label = document.createElement('span');
+      label.textContent = value || '(empty)';
+      label.className = 'jp-FilterModal-valueLabel';
+
+      const count = document.createElement('span');
+      count.textContent = `(${this._uniqueValues.counts[index].toLocaleString()})`;
+      count.className = 'jp-FilterModal-valueCount';
+
+      labelContainer.appendChild(label);
+      labelContainer.appendChild(count);
+
+      item.appendChild(checkbox);
+      item.appendChild(labelContainer);
+      valuesList.appendChild(item);
+    });
+
+    valuesContainer.appendChild(valuesList);
+    content.appendChild(valuesContainer);
+
+    // Bottom buttons
+    const bottomButtons = document.createElement('div');
+    bottomButtons.className = 'jp-FilterModal-bottomButtons';
+
+    const okBtn = document.createElement('button');
+    okBtn.className = 'jp-FilterModal-okButton';
+    okBtn.textContent = 'OK';
+    okBtn.onclick = () => this._apply();
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'jp-FilterModal-cancelButton';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = () => this.close();
+
+    bottomButtons.appendChild(cancelBtn);
+    bottomButtons.appendChild(okBtn);
+    content.appendChild(bottomButtons);
+
+    this.node.appendChild(content);
+  }
+
+  /**
+   * Select all values
+   */
+  private _selectAll(): void {
+    this._uniqueValues.values.forEach(value => this._selectedValues.add(value));
+    this._updateCheckboxes();
+  }
+
+  /**
+   * Clear all selections
+   */
+  private _clearAll(): void {
+    this._selectedValues.clear();
+    this._updateCheckboxes();
+  }
+
+  /**
+   * Toggle a value selection
+   */
+  private _toggleValue(value: string, checked: boolean): void {
+    if (checked) {
+      this._selectedValues.add(value);
+    } else {
+      this._selectedValues.delete(value);
+    }
+  }
+
+  /**
+   * Update checkbox states
+   */
+  private _updateCheckboxes(): void {
+    const checkboxes = this.node.querySelectorAll<HTMLInputElement>('.jp-FilterModal-checkbox');
+    checkboxes.forEach(cb => {
+      const value = cb.dataset.value || '';
+      cb.checked = this._selectedValues.has(value);
+    });
+  }
+
+  /**
+   * Apply filter and close modal
+   */
+  private _apply(): void {
+    const values = Array.from(this._selectedValues);
+    this._onApply(values.length > 0 ? values : null);
+    this.close();
   }
 
   /**

@@ -5,10 +5,11 @@
 [![PyPI version](https://img.shields.io/pypi/v/jupyterlab-tabular-data-viewer-extension.svg)](https://pypi.org/project/jupyterlab-tabular-data-viewer-extension/)
 [![Total PyPI downloads](https://static.pepy.tech/badge/jupyterlab-tabular-data-viewer-extension)](https://pepy.tech/project/jupyterlab-tabular-data-viewer-extension)
 [![JupyterLab 4](https://img.shields.io/badge/JupyterLab-4-orange.svg)](https://jupyterlab.readthedocs.io/en/stable/)
+[![Brought To You By KOLOMOLO](https://img.shields.io/badge/Brought%20To%20You%20By-KOLOMOLO-00ffff?style=flat)](https://kolomolo.com)
 
 View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Double-click any .parquet, .xlsx, .csv, or .tsv file to open it in a simple, spreadsheet-like table view - no code required. Navigate through your data, inspect values, and explore the structure of your tabular data files with interactive column resizing and advanced filtering capabilities.
 
-![Parquet Viewer](.resources/screenshot.png)
+![Parquet Viewer](.resources/screenshot-table.png)
 
 **Opening files:** Right-click any supported file and select "Tabular Data Viewer" from the "Open With" menu, or simply double-click to open with the default viewer.
 
@@ -44,6 +45,7 @@ View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Doubl
 **Advanced filtering and sorting:**
 - Column sorting with three-state toggle (ascending, descending, off)
 - Per-column filtering with substring or regex pattern matching
+- Multi-select value filter - Click filter button next to any column to select from unique values with counts. Supports filtering on empty strings and null values
 - Case-insensitive search option
 - Numerical filters supporting comparison operators (`>`, `<`, `>=`, `<=`, `=`)
 - Clear filters functionality to reset all active filters
@@ -147,6 +149,7 @@ Then delete the `jupyterlab_tabular_data_viewer_extension` symlink from your `la
 Three-tier testing strategy: Python backend, TypeScript frontend, and integration tests.
 
 **Python tests** (pytest with coverage):
+Tests cover backend API endpoints including metadata fetching, unique values with counts, data filtering, and content validation.
 ```bash
 pip install -e ".[test]"
 jupyter labextension develop . --overwrite

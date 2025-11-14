@@ -99,3 +99,33 @@ export async function fetchColumnStats(
     })
   });
 }
+
+/**
+ * Unique values interface
+ */
+export interface IUniqueValues {
+  values: string[];
+  counts: number[];
+  limit: number;
+  total_count: number;
+}
+
+/**
+ * Fetch unique values for a column from the backend
+ *
+ * @param filePath Path to the data file
+ * @param columnName Name of column to get unique values for
+ * @returns Unique values
+ */
+export async function fetchUniqueValues(
+  filePath: string,
+  columnName: string
+): Promise<IUniqueValues> {
+  return requestAPI<IUniqueValues>('unique-values', {
+    method: 'POST',
+    body: JSON.stringify({
+      path: filePath,
+      columnName: columnName
+    })
+  });
+}

@@ -43,6 +43,12 @@ jobs:
         jupyter labextension list 2>&1 | grep -ie "jupyterlab_tabular_data_viewer_extension.*OK"
         python -m jupyterlab.browser_check
 
+    - name: Run Python tests
+      run: |
+        set -eux
+        python -m pip install -e ".[test]"
+        python -m pytest jupyterlab_tabular_data_viewer_extension/tests/ -v
+
     - name: Package the extension
       run: |
         set -eux

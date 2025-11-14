@@ -1,6 +1,6 @@
 import { Widget } from '@lumino/widgets';
-import { requestAPI, fetchColumnStats } from './request';
-import { ColumnStatsModal } from './modal';
+import { requestAPI, fetchColumnStats, fetchUniqueValues } from './request';
+import { ColumnStatsModal, FilterModal } from './modal';
 
 /**
  * Column metadata interface
@@ -17,6 +17,7 @@ interface IFilterSpec {
   type: 'text' | 'number';
   value: string;
   operator?: string;
+  valueList?: string[];  // For multi-select filter
 }
 
 /**
@@ -361,6 +362,10 @@ export class TabularDataViewer extends Widget {
       const filterCell = document.createElement('th');
       filterCell.className = 'jp-TabularDataViewer-filterCell';
 
+      // Create filter container to hold input and icon
+      const filterContainer = document.createElement('div');
+      filterContainer.className = 'jp-TabularDataViewer-filterContainer';
+
       const filterInput = document.createElement('input');
       filterInput.type = 'text';
       filterInput.className = 'jp-TabularDataViewer-filterInput';
@@ -374,7 +379,38 @@ export class TabularDataViewer extends Widget {
         }
       });
 
-      filterCell.appendChild(filterInput);
+      // Create filter button with SVG icon
+      const filterButton = document.createElement('button');
+      filterButton.className = 'jp-TabularDataViewer-filterButton';
+      filterButton.dataset.columnName = col.name;
+      filterButton.title = 'Filter by values';
+
+      // Create SVG filter icon
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      svg.setAttribute('viewBox', '0 0 16 16');
+      svg.setAttribute('fill', 'currentColor');
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z');
+
+      svg.appendChild(path);
+      filterButton.appendChild(svg);
+
+      // Check if this column has an active multi-select filter
+      const currentFilter = this._filters[col.name];
+      if (currentFilter && currentFilter.valueList && currentFilter.valueList.length > 0) {
+        filterButton.classList.add('jp-TabularDataViewer-filterButton-active');
+      }
+
+      filterButton.addEventListener('click', async () => {
+        await this._openFilterModal(col.name, filterInput, filterButton);
+      });
+
+      filterContainer.appendChild(filterInput);
+      filterContainer.appendChild(filterButton);
+      filterCell.appendChild(filterContainer);
       this._filterRow.appendChild(filterCell);
 
       // Create header cell with column name and type
@@ -627,6 +663,73 @@ export class TabularDataViewer extends Widget {
 
     // Reload data with filters
     this._loadData(true);
+  }
+
+  /**
+   * Open filter modal for selecting unique values
+   */
+  private async _openFilterModal(columnName: string, filterInput: HTMLInputElement, filterButton: HTMLElement): Promise<void> {
+    try {
+      // Fetch unique values for this column
+      const uniqueValues = await fetchUniqueValues(this._filePath, columnName);
+
+      // Get current filter values if any
+      const currentFilter = this._filters[columnName];
+      const currentValueList = currentFilter?.valueList || [];
+
+      // Create and show modal
+      const modal = new FilterModal(
+        columnName,
+        uniqueValues,
+        currentValueList,
+        (selectedValues: string[] | null) => {
+          // Apply the filter when OK is clicked
+          if (selectedValues && selectedValues.length > 0) {
+            // Enable regex checkbox
+            this._useRegex = true;
+            this._regexCheckbox.checked = true;
+
+            // Create regex pattern: (value1|value2|value3)
+            // Escape special regex characters in values
+            const escapedValues = selectedValues.map(v =>
+              v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+            );
+            const regexPattern = `^(${escapedValues.join('|')})$`;
+
+            // Update filter input
+            filterInput.value = regexPattern;
+
+            // Store filter with value list
+            this._filters[columnName] = {
+              type: 'text',
+              value: regexPattern,
+              valueList: selectedValues
+            };
+
+            // Mark button as active
+            filterButton.classList.add('jp-TabularDataViewer-filterButton-active');
+
+            // Reload data with filters
+            this._loadData(true);
+          } else {
+            // Clear filter
+            filterInput.value = '';
+            delete this._filters[columnName];
+
+            // Mark button as inactive
+            filterButton.classList.remove('jp-TabularDataViewer-filterButton-active');
+
+            // Reload data
+            this._loadData(true);
+          }
+        }
+      );
+
+      modal.show();
+    } catch (error) {
+      console.error('Failed to open filter modal:', error);
+      this._showError(`Failed to load unique values: ${error}`);
+    }
   }
 
   /**

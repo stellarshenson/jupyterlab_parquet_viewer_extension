@@ -298,21 +298,27 @@ class ParquetDataHandler(APIHandler):
                     column = table.column(col_name)
 
                     if filter_type == 'text':
+                        # Cast column to string for text filtering (handles both string and numeric columns)
+                        column_str = pc.cast(column, pa.string())
+
+                        # Replace null values with "(null)" for consistent filtering
+                        column_str = pc.fill_null(column_str, '(null)')
+
                         if use_regex:
                             # Use regex matching when enabled
                             try:
                                 filter_expressions.append(
-                                    pc.match_substring_regex(column, filter_value, ignore_case=case_insensitive)
+                                    pc.match_substring_regex(column_str, filter_value, ignore_case=case_insensitive)
                                 )
                             except Exception:
                                 # Fall back to simple substring matching if regex is invalid
                                 filter_expressions.append(
-                                    pc.match_substring(column, filter_value, ignore_case=case_insensitive)
+                                    pc.match_substring(column_str, filter_value, ignore_case=case_insensitive)
                                 )
                         else:
                             # Use simple substring matching by default
                             filter_expressions.append(
-                                pc.match_substring(column, filter_value, ignore_case=case_insensitive)
+                                pc.match_substring(column_str, filter_value, ignore_case=case_insensitive)
                             )
                     elif filter_type == 'number':
                         # Numerical comparison
@@ -464,6 +470,129 @@ class ColumnStatsHandler(APIHandler):
             }))
 
 
+class UniqueValuesHandler(APIHandler):
+    """Handler for fetching unique values from a column"""
+
+    @tornado.web.authenticated
+    def post(self):
+        try:
+            input_data = self.get_json_body()
+            file_path = input_data.get('path', '')
+            column_name = input_data.get('columnName', '')
+
+            if not file_path:
+                self.set_status(400)
+                self.finish(json.dumps({'error': 'No file path provided'}))
+                return
+
+            if not column_name:
+                self.set_status(400)
+                self.finish(json.dumps({'error': 'No column name provided'}))
+                return
+
+            # Get the full path to the file using contents manager
+            contents_manager = self.settings.get('contents_manager')
+            if contents_manager:
+                root_dir = contents_manager.root_dir
+            else:
+                root_dir = os.getcwd()
+
+            self.log.info(f"Unique values request for column '{column_name}' in file: {file_path}")
+
+            full_path = os.path.join(root_dir, file_path.lstrip('/'))
+            abs_path = Path(full_path).resolve()
+
+            if not abs_path.exists():
+                self.set_status(404)
+                self.finish(json.dumps({'error': f'File not found: {file_path}'}))
+                return
+
+            # Detect file type and read accordingly
+            file_type = get_file_type(str(abs_path))
+
+            if file_type == 'parquet':
+                table = pq.read_table(str(abs_path))
+            elif file_type == 'excel':
+                table = read_excel_as_arrow_table(str(abs_path))
+            elif file_type == 'csv':
+                table = read_csv_as_arrow_table(str(abs_path), delimiter=',')
+            elif file_type == 'tsv':
+                table = read_csv_as_arrow_table(str(abs_path), delimiter='\t')
+            else:
+                self.set_status(400)
+                self.finish(json.dumps({'error': f'Unsupported file type: {file_type}'}))
+                return
+
+            # Check if column exists
+            if column_name not in table.column_names:
+                self.set_status(400)
+                self.finish(json.dumps({'error': f'Column "{column_name}" not found in file'}))
+                return
+
+            # Get column
+            column = table.column(column_name)
+
+            # Cast to string to handle all types uniformly
+            column_str = pc.cast(column, pa.string())
+
+            # Replace null values with the string "(null)" for consistent handling
+            column_str = pc.fill_null(column_str, '(null)')
+
+            # Get value counts
+            limit = 1000
+            value_counts = pc.value_counts(column_str)
+
+            # value_counts returns a StructArray with 'values' and 'counts' fields
+            values_array = value_counts.field('values')
+            counts_array = value_counts.field('counts')
+
+            # Combine into list of tuples
+            value_count_pairs = list(zip(values_array.to_pylist(), counts_array.to_pylist()))
+
+            # Sort by value (alphabetically), with empty string and (null) first
+            def sort_key(x):
+                val = x[0]
+                if val == '':
+                    return (0, '')  # Empty string first
+                elif val == '(null)':
+                    return (1, '')  # Null second
+                else:
+                    return (2, val)  # Everything else alphabetically
+
+            value_count_pairs.sort(key=sort_key)
+
+            # Limit the results
+            total_unique = len(value_count_pairs)
+            value_count_pairs = value_count_pairs[:limit]
+
+            # Separate back into values and counts
+            values_list = [v for v, c in value_count_pairs]
+            counts_list = [c for v, c in value_count_pairs]
+
+            result = {
+                'values': values_list,
+                'counts': counts_list,
+                'limit': limit,
+                'total_count': total_unique
+            }
+
+            self.finish(json.dumps(result))
+
+        except ValueError as e:
+            # Column not found or other validation error
+            self.set_status(400)
+            self.finish(json.dumps({'error': str(e)}))
+        except Exception as e:
+            import traceback
+            error_traceback = traceback.format_exc()
+            self.log.error(f"Unique values handler error: {str(e)}\n{error_traceback}")
+            self.set_status(500)
+            self.finish(json.dumps({
+                'error': str(e),
+                'error_type': type(e).__name__
+            }))
+
+
 def setup_route_handlers(web_app):
     host_pattern = ".*$"
     base_url = web_app.settings["base_url"]
@@ -471,11 +600,13 @@ def setup_route_handlers(web_app):
     metadata_pattern = url_path_join(base_url, "jupyterlab-tabular-data-viewer-extension", "metadata")
     data_pattern = url_path_join(base_url, "jupyterlab-tabular-data-viewer-extension", "data")
     stats_pattern = url_path_join(base_url, "jupyterlab-tabular-data-viewer-extension", "column-stats")
+    unique_values_pattern = url_path_join(base_url, "jupyterlab-tabular-data-viewer-extension", "unique-values")
 
     handlers = [
         (metadata_pattern, ParquetMetadataHandler),
         (data_pattern, ParquetDataHandler),
-        (stats_pattern, ColumnStatsHandler)
+        (stats_pattern, ColumnStatsHandler),
+        (unique_values_pattern, UniqueValuesHandler)
     ]
 
     web_app.add_handlers(host_pattern, handlers)

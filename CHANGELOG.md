@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.3.30] - 2025-11-14
+
+**Tag**: RELEASE_1.3.30
+
+### Added
+
+- **JupyterLab-Driven Font Sizing**: All UI fonts now use JupyterLab CSS variables for responsive scaling
+  - Column names: `calc(var(--jp-ui-font-size1) * 1.10)` for 10% larger text
+  - Column types: `var(--jp-ui-font-size1)`
+  - Table cells: `var(--jp-ui-font-size1)`
+  - Row numbers: `var(--jp-ui-font-size1)`
+  - Fonts scale automatically with JupyterLab's UI font size settings
+- **Settings Panel Icon**: Extension now displays spreadsheet icon in JupyterLab Settings panel using `ui-components:spreadsheet`
+- **Maximum Unique Values Setting**: New `maxUniqueValues` setting (default: 100) controls unique value display limits
+  - Applies to both filter dialog and statistics modal
+  - Set to 0 for unlimited display
+  - Configurable via Settings Editor
+- **Enhanced Statistics Modal - Unique Values Display**:
+  - Scrollable list of unique values sorted by frequency (most common first)
+  - Shows value count and percentage for each unique value
+  - Displays as bullet points matching other stats sections
+  - Info message only appears when values are limited: "Showing X of Y unique values"
+  - Hidden when all unique values are displayed
+- **Backend Sorting by Frequency**: UniqueValuesHandler now sorts unique values by count (frequency) in descending order
+- **README Disclaimer**: Humorous acknowledgment that extension is shameless ripoff of typical tabular data browsing tools
+
+### Changed
+
+- **Statistics Icon**: Restored Font Awesome info icon (`fas fa-info-circle`) for column statistics
+- **Unique Values Display Style**: Changed from custom box layout to standard bullet points for consistency
+
 ## [1.3.14] - 2025-11-14
 
 **Tag**: RELEASE_1.3.14

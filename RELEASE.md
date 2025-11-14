@@ -1,5 +1,80 @@
 # Making a new release of jupyterlab_tabular_data_viewer_extension
 
+## What's New in Version 1.3.30
+
+Version 1.3.30 delivers major UI/UX enhancements with responsive typography system, enhanced statistics modal with unique values display, and comprehensive font scaling integration with JupyterLab settings.
+
+### Responsive Typography System (1.3.30)
+
+All UI fonts now use JupyterLab CSS variables for automatic scaling with user's font size preferences.
+
+**Font Sizing:**
+
+- **Column names**: `calc(var(--jp-ui-font-size1) * 1.10)` - 10% larger than standard UI font
+- **Column types**: `var(--jp-ui-font-size1)` - standard UI font size
+- **Table cells**: `var(--jp-ui-font-size1)` - consistent cell text sizing
+- **Row numbers**: `var(--jp-ui-font-size1)` - matches cell font size
+
+**Benefits:**
+
+- Fonts automatically scale when user changes JupyterLab's UI font size settings
+- Consistent typography hierarchy across all viewer components
+- Better accessibility for users requiring larger fonts
+- Seamless integration with JupyterLab's design system
+
+### Enhanced Statistics Modal - Unique Values (1.3.30)
+
+Statistics modal now displays comprehensive unique value information sorted by frequency.
+
+**Features:**
+
+- **Scrollable unique values list** - sorted by frequency (most common first)
+- **Count and percentage display** - shows both absolute count and percentage of total rows for each unique value
+- **Bullet point styling** - matches other statistics sections for visual consistency
+- **Smart info messages** - only appears when values are limited: "Showing X of Y unique values"
+- **Configurable limit** - controlled by new `maxUniqueValues` setting (default: 100)
+
+**Backend Implementation:**
+
+- Uses PyArrow's `value_counts()` for efficient computation
+- Sorts unique values by count in descending order (most frequent first)
+- Accepts `limit` parameter from frontend
+- Returns both values and counts for display
+
+**Technical Details:**
+
+- modal.ts:src/modal.ts - unique values displayed as `<ul>` with bullet points
+- routes.py:jupyterlab_tabular_data_viewer_extension/routes.py - frequency-based sorting with tuple pairs
+- base.css:style/base.css - scrollable list with 300px max-height
+
+### Settings Enhancements (1.3.30)
+
+New settings and visual improvements for better discoverability and control.
+
+**New Settings:**
+
+- **Maximum Unique Values** (`maxUniqueValues`) - Default: 100
+  - Controls unique value display limits in both filter dialog and statistics modal
+  - Set to 0 for unlimited display
+  - Accessible via Settings → Settings Editor → Tabular Data Viewer Extension
+
+**Visual Improvements:**
+
+- **Settings panel icon** - Extension now displays spreadsheet icon using `ui-components:spreadsheet`
+- **Statistics icon** - Restored Font Awesome info icon (`fas fa-info-circle`) for column statistics
+- Better visibility in JupyterLab Settings panel
+
+**Technical Implementation:**
+
+- schema/plugin.json:schema/plugin.json - maxUniqueValues property with validation
+- index.ts:src/index.ts - ISettings interface updated
+- widget.ts:src/widget.ts - maxUniqueValues passed to API calls
+
+### Documentation (1.3.30)
+
+- Added humorous disclaimer acknowledging extension as shameless ripoff of typical tabular data browsing tools
+- Updated README configuration section with maxUniqueValues setting
+
 ## What's New in Version 1.3.14
 
 Version 1.3.14 adds comprehensive backend testing infrastructure and CI/CD integration to ensure code quality and reliability.

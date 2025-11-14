@@ -25,6 +25,12 @@ def convert_to_json_serializable(value):
         return float(value)
     elif isinstance(value, bytes):
         return value.decode('utf-8', errors='replace')
+    elif isinstance(value, (list, tuple)):
+        # Convert list/tuple to JSON string for display
+        return json.dumps(value)
+    elif isinstance(value, dict):
+        # Convert dict to JSON string for display
+        return json.dumps(value)
     else:
         return value
 

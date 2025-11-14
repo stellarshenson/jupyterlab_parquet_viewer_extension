@@ -187,9 +187,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
     });
 
-    // Note: We don't add a separate context menu item for refresh because we're
-    // overriding the existing 'jupyterlab_refresh_view:refresh' command.
-    // The refresh view extension already adds this to the context menu.
+    // Add context menu item for tabular data viewers
+    // This ensures the menu item appears even if refresh view extension isn't loaded
+    contextMenu.addItem({
+      command: refreshCommand,
+      selector: '.jp-TabularDataViewer',
+      rank: 0
+    });
 
     // Add to context menu for tabular data viewer rows
     contextMenu.addItem({

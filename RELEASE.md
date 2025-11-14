@@ -1,5 +1,13 @@
 # Making a new release of jupyterlab_tabular_data_viewer_extension
 
+## What's New in Version 1.3.30
+
+Version 1.3.30 adds humorous disclaimer to README acknowledging derivative nature of the extension.
+
+### Documentation Enhancement (1.3.30)
+
+Added self-deprecating disclaimer immediately after opening description in README.md, acknowledging that this extension is a shameless ripoff of typical tabular data browsing tools with zero ingenuity or creativity. The tone is honest and tongue-in-cheek, making it clear this is a straightforward implementation of familiar data viewing functionality.
+
 ## What's New in Version 1.3.14
 
 Version 1.3.14 adds comprehensive backend testing infrastructure and CI/CD integration to ensure code quality and reliability.

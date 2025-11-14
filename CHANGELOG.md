@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.3.30] - 2025-11-14
+
+**Tag**: RELEASE_1.3.30
+
+### Added
+
+- **README Disclaimer**: Humorous acknowledgment that extension is shameless ripoff of typical tabular data browsing tools with zero ingenuity or creativity
+
 ## [1.3.14] - 2025-11-14
 
 **Tag**: RELEASE_1.3.14

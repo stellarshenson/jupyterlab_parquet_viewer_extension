@@ -9,6 +9,8 @@
 
 View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Double-click any .parquet, .xlsx, .csv, or .tsv file to open it in a simple, spreadsheet-like table view - no code required (yes, really). Navigate through your data, inspect values, and explore the structure of your tabular data files with interactive column resizing and advanced filtering capabilities.
 
+**Full disclosure:** This is a shameless ripoff of your typical tabular data browsing tools. Zero ingenuity, zero creativity - just unabashed borrowing of ideas that worked elsewhere. If it looks familiar, that's the point.
+
 ![Parquet Viewer](.resources/screenshot-table.png)
 
 **Opening files:** Right-click any supported file and select "Tabular Data Viewer" from the "Open With" menu, or simply double-click to open with the default viewer.

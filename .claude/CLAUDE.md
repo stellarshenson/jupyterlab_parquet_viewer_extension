@@ -17,6 +17,18 @@ This file extends workspace-level configuration with project-specific rules.
 
 **Why**: Prevents version mismatch between code changes, journal entries, changelog, and git commits.
 
+## Git Tagging Policy
+
+**MANDATORY**: NEVER create git tags without explicit user permission.
+
+**Tagging Rules**:
+- DO NOT create tags (RELEASE_*, STABLE_*, or any other tags) automatically
+- DO NOT tag after commits, builds, or any other operations
+- ONLY create tags when user explicitly requests: "tag as RELEASE_X.X.X" or similar
+- If user says "commit and push", do NOT tag unless explicitly requested
+
+**Why**: Tags mark important milestones and should only be created when user explicitly approves.
+
 ## Project Context
 
 **Technology Stack**:

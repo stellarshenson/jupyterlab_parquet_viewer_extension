@@ -253,6 +253,21 @@
 /* Horizontal borders only in data rows, not in header */
 .jp-TabularDataViewer-tbody .jp-TabularDataViewer-rowNumberCell {
   border-bottom: 1px solid var(--jp-border-color0) !important;
+  cursor: pointer;
+}
+
+/* Row number cell hover effect */
+.jp-TabularDataViewer-tbody .jp-TabularDataViewer-rowNumberCell:hover {
+  background-color: var(--jp-layout-color3);
+}
+
+/* Selected row highlighting */
+.jp-TabularDataViewer-row-selected {
+  background-color: var(--jp-brand-color3) !important;
+}
+
+.jp-TabularDataViewer-row-selected .jp-TabularDataViewer-cell {
+  background-color: var(--jp-brand-color3) !important;
 }
 
 .jp-TabularDataViewer-cell:last-child {

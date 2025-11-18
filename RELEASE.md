@@ -1,5 +1,43 @@
 # Making a new release of jupyterlab_tabular_data_viewer_extension
 
+## What's New in Version 1.3.32
+
+Version 1.3.32 adds interactive row selection functionality via index column clicks, providing visual feedback for data inspection.
+
+### Row Selection via Index Column Click (1.3.32)
+
+Click row number cells to highlight entire rows, improving data inspection and navigation workflow.
+
+**Features:**
+
+- **Click to select** - clicking row number cell highlights entire row with brand color background
+- **Toggle selection** - clicking same row number again deselects/unhighlights the row
+- **Switch selection** - clicking different row number switches highlight to new row
+- **Visual feedback** - pointer cursor and hover effect indicate row numbers are clickable
+- **Automatic cleanup** - selection clears when data refreshes or errors occur
+
+**User Experience:**
+
+- Row number cells show pointer cursor on hover, signaling interactivity
+- Hover effect (lighter background) provides additional visual feedback before clicking
+- Selected rows use JupyterLab's brand color (`var(--jp-brand-color3)`) for consistent theming
+- Selection state persists while scrolling and filtering until explicitly changed
+- Clear visual indication of which row is currently selected for reference
+
+**Implementation:**
+
+- Added `_selectedRow` private property to track currently selected row element
+- Click event listener on row number cells manages selection state
+- Adds/removes `jp-TabularDataViewer-row-selected` CSS class
+- Selection cleared in `loadData` (when reset=true) and `_showError` methods
+- CSS uses `!important` to override default cell backgrounds for selected rows
+
+**Technical Details:**
+
+- widget.ts:src/widget.ts lines 66, 547-564 - selection state management and click handler
+- widget.ts:src/widget.ts lines 318, 1073 - selection cleanup on data reset/error
+- base.css:style/base.css lines 256, 260-271 - cursor pointer, hover, and selection styling
+
 ## What's New in Version 1.3.31
 
 Version 1.3.31 adds frozen index column functionality, keeping row numbers visible when scrolling horizontally through wide datasets.

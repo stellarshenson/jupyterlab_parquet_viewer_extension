@@ -63,6 +63,7 @@ export class TabularDataViewer extends Widget {
   private _menuObserver: MutationObserver | null = null;
   private _maxCellCharacters: number = 100;
   private _maxUniqueValues: number = 100;
+  private _selectedRow: HTMLTableRowElement | null = null;
 
   constructor(
     filePath: string,
@@ -314,6 +315,7 @@ export class TabularDataViewer extends Widget {
         this._currentOffset = 0;
         this._data = [];
         this._tbody.innerHTML = '';
+        this._selectedRow = null; // Clear row selection on reset
       }
 
       const response = await requestAPI<any>('data', {
@@ -541,6 +543,27 @@ export class TabularDataViewer extends Widget {
       rowNumCell.className =
         'jp-TabularDataViewer-cell jp-TabularDataViewer-rowNumberCell';
       rowNumCell.textContent = String(row['__row_index__'] || '');
+
+      // Add click handler for row selection/highlighting
+      rowNumCell.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        // If clicking the already selected row, deselect it
+        if (this._selectedRow === tr) {
+          tr.classList.remove('jp-TabularDataViewer-row-selected');
+          this._selectedRow = null;
+        } else {
+          // Remove highlight from previously selected row
+          if (this._selectedRow) {
+            this._selectedRow.classList.remove('jp-TabularDataViewer-row-selected');
+          }
+
+          // Highlight the new row
+          tr.classList.add('jp-TabularDataViewer-row-selected');
+          this._selectedRow = tr;
+        }
+      });
+
       tr.appendChild(rowNumCell);
 
       this._columns.forEach(col => {
@@ -1047,6 +1070,7 @@ export class TabularDataViewer extends Widget {
    */
   private _showError(message: string): void {
     this._tbody.innerHTML = '';
+    this._selectedRow = null; // Clear row selection on error
     const tr = document.createElement('tr');
     const td = document.createElement('td');
     td.colSpan = this._columns.length || 1;

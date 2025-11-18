@@ -239,6 +239,15 @@
   max-width: 60px;
   width: 60px;
   border-right: 1px solid var(--jp-border-color0) !important;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Row number cells in header (thead) need higher z-index to appear above sticky header */
+.jp-TabularDataViewer-thead .jp-TabularDataViewer-rowNumberCell {
+  z-index: 15;
 }
 
 /* Horizontal borders only in data rows, not in header */

@@ -1,5 +1,37 @@
 # Making a new release of jupyterlab_tabular_data_viewer_extension
 
+## What's New in Version 1.3.31
+
+Version 1.3.31 adds frozen index column functionality, keeping row numbers visible when scrolling horizontally through wide datasets.
+
+### Frozen Index Column (1.3.31)
+
+Row number column now stays fixed in position when scrolling horizontally, improving navigation and usability for wide datasets.
+
+**Features:**
+
+- **Sticky positioning** - row number column remains visible at left edge during horizontal scroll
+- **Proper z-index layering** - row numbers appear above regular cells (z-index: 5) and header row numbers appear above sticky header (z-index: 15)
+- **Visual depth** - subtle box-shadow (2px 0 4px rgba(0, 0, 0, 0.1)) on right edge creates depth effect during scrolling
+- **Corner case handling** - sticky positioning works correctly in both data rows and header rows
+
+**Implementation:**
+
+- CSS-only solution using `position: sticky` and `left: 0` on `.jp-TabularDataViewer-rowNumberCell`
+- Separate z-index rules for tbody cells (5) and thead cells (15) for proper stacking context
+- Box-shadow provides subtle visual separation between frozen and scrolling content
+
+**Benefits:**
+
+- Always visible row numbers make it easier to reference specific rows while browsing wide tables
+- No JavaScript changes required - pure CSS solution for optimal performance
+- Works seamlessly with existing sticky header functionality
+- Improves user experience when working with datasets containing many columns
+
+**Technical Details:**
+
+- base.css:style/base.css lines 242-250 - sticky positioning and z-index configuration
+
 ## What's New in Version 1.3.30
 
 Version 1.3.30 delivers major UI/UX enhancements with responsive typography system, enhanced statistics modal with unique values display, and comprehensive font scaling integration with JupyterLab settings.

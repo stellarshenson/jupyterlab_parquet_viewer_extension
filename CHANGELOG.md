@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.3.31] - 2025-11-18
+
+**Tag**: RELEASE_1.3.31
+
+### Added
+
+- **Frozen Index Column**: Row number column now stays fixed when scrolling horizontally
+  - Implemented using CSS sticky positioning with `position: sticky` and `left: 0`
+  - Row number cells use `z-index: 5` for proper layering above regular cells
+  - Header row number cells use `z-index: 15` to appear above sticky header
+  - Added subtle box-shadow (2px 0 4px) on right edge for visual depth during horizontal scrolling
+  - Sticky positioning works correctly in both data rows and header rows (corner case)
+  - Improves usability for wide datasets by keeping row numbers always visible
+
 ## [1.3.30] - 2025-11-14
 
 **Tag**: RELEASE_1.3.30

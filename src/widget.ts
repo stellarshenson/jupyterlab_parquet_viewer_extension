@@ -543,27 +543,6 @@ export class TabularDataViewer extends Widget {
       rowNumCell.className =
         'jp-TabularDataViewer-cell jp-TabularDataViewer-rowNumberCell';
       rowNumCell.textContent = String(row['__row_index__'] || '');
-
-      // Add click handler for row selection/highlighting
-      rowNumCell.addEventListener('click', (e) => {
-        e.stopPropagation();
-
-        // If clicking the already selected row, deselect it
-        if (this._selectedRow === tr) {
-          tr.classList.remove('jp-TabularDataViewer-row-selected');
-          this._selectedRow = null;
-        } else {
-          // Remove highlight from previously selected row
-          if (this._selectedRow) {
-            this._selectedRow.classList.remove('jp-TabularDataViewer-row-selected');
-          }
-
-          // Highlight the new row
-          tr.classList.add('jp-TabularDataViewer-row-selected');
-          this._selectedRow = tr;
-        }
-      });
-
       tr.appendChild(rowNumCell);
 
       this._columns.forEach(col => {
@@ -583,6 +562,26 @@ export class TabularDataViewer extends Widget {
           this._tbody.querySelectorAll('tr').forEach(r => {
             r.classList.remove('jp-TabularDataViewer-row-context-active');
           });
+        }
+      });
+
+      // Add click handler for row selection/highlighting (anywhere on row)
+      tr.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        // If clicking the already selected row, deselect it
+        if (this._selectedRow === tr) {
+          tr.classList.remove('jp-TabularDataViewer-row-selected');
+          this._selectedRow = null;
+        } else {
+          // Remove highlight from previously selected row
+          if (this._selectedRow) {
+            this._selectedRow.classList.remove('jp-TabularDataViewer-row-selected');
+          }
+
+          // Highlight the new row
+          tr.classList.add('jp-TabularDataViewer-row-selected');
+          this._selectedRow = tr;
         }
       });
 

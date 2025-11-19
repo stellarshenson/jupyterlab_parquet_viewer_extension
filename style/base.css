@@ -253,6 +253,10 @@
 /* Horizontal borders only in data rows, not in header */
 .jp-TabularDataViewer-tbody .jp-TabularDataViewer-rowNumberCell {
   border-bottom: 1px solid var(--jp-border-color0) !important;
+}
+
+/* Clickable rows */
+.jp-TabularDataViewer-tbody .jp-TabularDataViewer-row {
   cursor: pointer;
 }
 
@@ -263,11 +267,15 @@
 
 /* Selected row highlighting */
 .jp-TabularDataViewer-row-selected {
-  background-color: var(--jp-brand-color3) !important;
+  background-color: color-mix(in srgb, var(--jp-brand-color1) 10%, transparent) !important;
 }
 
 .jp-TabularDataViewer-row-selected .jp-TabularDataViewer-cell {
-  background-color: var(--jp-brand-color3) !important;
+  background-color: color-mix(in srgb, var(--jp-brand-color1) 10%, transparent) !important;
+}
+
+.jp-TabularDataViewer-row-selected .jp-TabularDataViewer-rowNumberCell {
+  background-color: color-mix(in srgb, var(--jp-brand-color1) 20%, var(--jp-layout-color2)) !important;
 }
 
 .jp-TabularDataViewer-cell:last-child {

@@ -47,42 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Filter input listener checks if value is empty AND filter exists for column
 - Deletes filter and triggers data reload when field emptied
 
-## [1.3.32] - 2025-11-18
-
-**Tag**: RELEASE_1.3.32
-
-### Added
-
-- **Row Selection via Index Column Click**: Click row number cells to highlight rows
-  - Click row number cell to highlight entire row with brand color background
-  - Click again to toggle off (deselect)
-  - Click another row number to switch selection
-  - Pointer cursor and hover effect on row number cells indicate clickability
-  - Selected rows use `var(--jp-brand-color3)` background color
-  - Selection clears automatically on data reset or error states
-  - Improves data inspection workflow with visual feedback
-
-### Technical
-
-- Added `_selectedRow` private property to track selected row element
-- Click handler adds/removes `jp-TabularDataViewer-row-selected` CSS class
-- Row number cells show `cursor: pointer` and hover background `var(--jp-layout-color3)`
-- Selection state management clears on tbody reset in both loadData and _showError methods
-
-## [1.3.31] - 2025-11-18
-
-**Tag**: RELEASE_1.3.31
-
-### Added
-
-- **Frozen Index Column**: Row number column now stays fixed when scrolling horizontally
-  - Implemented using CSS sticky positioning with `position: sticky` and `left: 0`
-  - Row number cells use `z-index: 5` for proper layering above regular cells
-  - Header row number cells use `z-index: 15` to appear above sticky header
-  - Added subtle box-shadow (2px 0 4px) on right edge for visual depth during horizontal scrolling
-  - Sticky positioning works correctly in both data rows and header rows (corner case)
-  - Improves usability for wide datasets by keeping row numbers always visible
-
 ## [1.3.30] - 2025-11-14
 
 **Tag**: RELEASE_1.3.30

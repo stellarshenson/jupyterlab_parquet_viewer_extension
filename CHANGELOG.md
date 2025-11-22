@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.5.0] - 2025-11-22
+
+**Tag**: RELEASE_1.5.0
+
+### Added
+
+- **Download Filtered Data**: Export filtered and sorted data in original file format
+  - "Download Filtered Data" button added to status bar right section
+  - Downloads data with current filters and sorting applied
+  - Exports in original format (Parquet, Excel, CSV, or TSV)
+  - Downloaded filename includes "_filtered" suffix (e.g., "data_filtered.parquet")
+  - Supports all filter types: text/regex matching with case sensitivity, numeric comparisons
+  - Preserves current sort order (ascending/descending by column)
+  - Backend converts filtered PyArrow table to pandas DataFrame for export
+  - Parquet exports use `to_parquet()` with BytesIO buffer
+  - Excel exports use `to_excel()` with openpyxl engine
+  - CSV exports use `to_csv()` with UTF-8 encoding
+  - TSV exports use `to_csv()` with tab delimiter
+  - Proper HTTP headers (Content-Type and Content-Disposition) for each format
+  - Allows users to export filtered views for use in other applications
+
+### Technical
+
+- Added `DownloadHandler` backend class handling GET requests with filter/sort parameters
+- Frontend uses `URLExt.join()` and `ServerConnection.makeSettings()` for proper URL construction
+- Download URL includes query parameters: path, filters (JSON), sortBy, sortOrder, caseInsensitive, useRegex
+- Backend applies same filter logic as data display handler
+- PyArrow sorting using `pc.sort_indices()` before DataFrame conversion
+- Download button styled with brand colors, hover states, and smooth transitions
+- Temporary link element created and removed after triggering download
+
 ## [1.4.4] - 2025-11-18
 
 **Tag**: RELEASE_1.4.4

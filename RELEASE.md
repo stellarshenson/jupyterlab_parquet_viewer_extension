@@ -1,5 +1,46 @@
 # Making a new release of jupyterlab_tabular_data_viewer_extension
 
+## What's New in Version 1.5.0
+
+Version 1.5.0 introduces the ability to download filtered and sorted data in the original file format, enabling users to export their filtered views for use in other applications.
+
+### Download Filtered Data (1.5.0)
+
+Export your filtered and sorted data with a single click, preserving all current filters and sort order.
+
+**Features:**
+
+- **Download button** - "Download Filtered Data" button in status bar right section
+- **Current state export** - downloads data with all active filters and sorting applied
+- **Original format** - exports in same format as source file (Parquet, Excel, CSV, or TSV)
+- **Clear filename** - appends "_filtered" suffix to original filename (e.g., "data_filtered.parquet")
+- **All filter types** - supports text/regex matching (with case sensitivity option) and numeric comparisons
+- **Sort preservation** - maintains current sort order (ascending/descending by column)
+- **Format-specific export** - optimized export for each file type with proper headers
+
+**Supported Formats:**
+
+- **Parquet** - binary export using `to_parquet()` with BytesIO buffer
+- **Excel** - XLSX format using `to_excel()` with openpyxl engine
+- **CSV** - text export with UTF-8 encoding
+- **TSV** - text export with tab delimiter
+
+**Implementation:**
+
+- Backend `DownloadHandler` class processes GET requests with filter and sort parameters
+- Frontend constructs download URL using JupyterLab's `URLExt` and `ServerConnection` utilities
+- Query parameters include: file path, filters (JSON), sortBy, sortOrder, caseInsensitive, useRegex
+- Backend applies identical filter logic as data display handler
+- PyArrow `pc.sort_indices()` applies sorting before DataFrame conversion
+- Proper HTTP Content-Type and Content-Disposition headers for each format
+- Download button styled with brand colors, hover states, and smooth transitions
+
+**Usage:**
+
+1. Apply desired filters and sorting to your data
+2. Click "Download Filtered Data" button in status bar
+3. Browser downloads file with "_filtered" suffix in original format
+
 ## What's New in Version 1.4.4
 
 Version 1.4.4 delivers major UX improvements with frozen index column for horizontal scrolling, interactive row selection, and automatic filter clearing.

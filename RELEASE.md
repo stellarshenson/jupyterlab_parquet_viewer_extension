@@ -1,5 +1,54 @@
 # Making a new release of jupyterlab_tabular_data_viewer_extension
 
+## What's New in Version 1.5.8
+
+Version 1.5.8 enhances the download experience by moving it to a context menu with a multi-format selection modal, eliminating the need for download settings configuration.
+
+### Context Menu Download with Multi-Format Modal (1.5.8)
+
+Access download functionality via right-click context menu with an intuitive modal offering three export formats.
+
+**Features:**
+
+- **Context menu access** - right-click anywhere on viewer to access "Download Filtered Data" command
+- **Modal format selection** - clean modal dialog displays three format options vertically
+- **Three export formats** - Original Format, Excel (.xlsx), CSV
+- **No configuration needed** - all format options permanently enabled, no settings to adjust
+- **Consistent UI** - modal uses filter modal styling for familiar appearance
+- **Format conversion** - download Parquet as Excel, CSV as Excel, or any supported conversion
+- **Filtered data preservation** - downloads preserve all active filters, sort order, and transformations
+- **Smart filename** - output filename includes appropriate extension based on selected format with "_filtered" suffix
+
+**Modal Interface:**
+
+- Format buttons stacked vertically with proper spacing for easy selection
+- Cancel button at bottom for easy dismissal
+- Clean, focused interface matching existing modal designs
+- ESC key or backdrop click to close
+
+**Supported Export Formats:**
+
+- **Original Format** - exports in source file format (Parquet, Excel, CSV, TSV)
+- **Excel (.xlsx)** - converts any source format to Excel using openpyxl
+- **CSV** - converts any source format to CSV with UTF-8 encoding
+
+**Implementation:**
+
+- Added `DownloadModal` class with format selection UI
+- Modal uses `jp-FilterModal` CSS classes for consistency
+- Backend accepts format parameter to enable cross-format conversion
+- Context menu command registered at rank 100
+- Removed format-specific settings for simplified configuration
+- Vertical button layout using `jp-FilterModal-buttons` class with 8px gap
+
+**Usage:**
+
+1. Apply desired filters and sorting to your data
+2. Right-click anywhere on the viewer
+3. Select "Download Filtered Data" from context menu
+4. Choose export format from modal (Original, Excel, or CSV)
+5. Browser downloads file with "_filtered" suffix in selected format
+
 ## What's New in Version 1.5.0
 
 Version 1.5.0 introduces the ability to download filtered and sorted data in the original file format, enabling users to export their filtered views for use in other applications.

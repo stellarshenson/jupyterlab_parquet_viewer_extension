@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## [1.5.8] - 2025-11-23
+
+**Tag**: RELEASE_1.5.8
+
+### Added
+
+- **Context Menu Download with Multi-Format Modal**: Download filtered and sorted data via right-click context menu
+  - Right-click on viewer to access "Download Filtered Data" command in context menu
+  - Modal dialog displays three format options: Original Format, Excel (.xlsx), CSV
+  - All format options permanently enabled - no user configuration required
+  - Modal uses filter modal styling for consistent UI appearance
+  - Format buttons stacked vertically with proper spacing
+  - Cancel button at bottom of modal for easy dismissal
+  - Downloads preserve all active filters, sort order, and data transformations
+  - Backend supports format conversion (e.g., Parquet to Excel, CSV to Excel)
+  - Output filename includes appropriate extension based on selected format
+
+### Changed
+
+- Removed download format settings (enableDownloadOriginal, enableDownloadExcel, enableDownloadCSV)
+- Simplified settings interface by removing download-specific configuration
+- Modal always shows all three format options without user preference filtering
+
+### Technical
+
+- Added `DownloadModal` class in src/modal.ts with format selection UI
+- Modal uses `jp-FilterModal` CSS classes for consistent styling with existing modals
+- Added `showDownloadModal()` public method to TabularDataViewer widget
+- Registered "Download Filtered Data" command in context menu at rank 100
+- Updated `DownloadHandler` backend to accept format parameter ('original', 'xlsx', 'csv')
+- Backend determines output format based on request parameter, not source file type
+- Added `jp-FilterModal-buttons` CSS class for vertical button layout with 8px gap
+- Added `jp-FilterModal-footer` CSS class for footer section with top border
+- Removed download-specific CSS in favor of reusing filter modal styles
+- Updated README.md with download feature documentation and screenshot
+
 ## [1.5.0] - 2025-11-22
 
 **Tag**: RELEASE_1.5.0

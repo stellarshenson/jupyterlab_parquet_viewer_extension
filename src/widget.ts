@@ -1,6 +1,6 @@
 import { Widget } from '@lumino/widgets';
 import { requestAPI, fetchColumnStats, fetchUniqueValues } from './request';
-import { ColumnStatsModal, FilterModal } from './modal';
+import { ColumnStatsModal, FilterModal, DownloadModal } from './modal';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 
@@ -66,27 +66,18 @@ export class TabularDataViewer extends Widget {
   private _maxCellCharacters: number = 100;
   private _maxUniqueValues: number = 100;
   private _selectedRow: HTMLTableRowElement | null = null;
-  private _enableDownloadOriginal: boolean = true;
-  private _enableDownloadExcel: boolean = true;
-  private _enableDownloadCSV: boolean = true;
 
   constructor(
     filePath: string,
     setLastContextMenuRow: (row: any) => void,
     maxCellCharacters: number = 100,
-    maxUniqueValues: number = 100,
-    enableDownloadOriginal: boolean = true,
-    enableDownloadExcel: boolean = true,
-    enableDownloadCSV: boolean = true
+    maxUniqueValues: number = 100
   ) {
     super();
     this._filePath = filePath;
     this._setLastContextMenuRow = setLastContextMenuRow;
     this._maxCellCharacters = maxCellCharacters;
     this._maxUniqueValues = maxUniqueValues;
-    this._enableDownloadOriginal = enableDownloadOriginal;
-    this._enableDownloadExcel = enableDownloadExcel;
-    this._enableDownloadCSV = enableDownloadCSV;
     this.addClass('jp-TabularDataViewer');
 
     // Create table container (scrollable)
@@ -171,61 +162,6 @@ export class TabularDataViewer extends Widget {
 
     this._statusRight = document.createElement('div');
     this._statusRight.className = 'jp-TabularDataViewer-statusRight';
-
-    // Create download dropdown container
-    const downloadContainer = document.createElement('div');
-    downloadContainer.className = 'jp-TabularDataViewer-downloadContainer';
-
-    // Create download button
-    const downloadButton = document.createElement('button');
-    downloadButton.className = 'jp-TabularDataViewer-downloadButton';
-    downloadButton.textContent = 'Download ▼';
-    downloadButton.title = 'Download data with current filters and sorting applied';
-
-    // Create dropdown menu
-    const downloadMenu = document.createElement('div');
-    downloadMenu.className = 'jp-TabularDataViewer-downloadMenu';
-    downloadMenu.style.display = 'none';
-
-    // Build menu items based on settings
-    const menuItems: Array<{label: string, format: string}> = [];
-
-    if (this._enableDownloadOriginal) {
-      menuItems.push({label: 'Download as Original Format', format: 'original'});
-    }
-    if (this._enableDownloadExcel) {
-      menuItems.push({label: 'Download as Excel (.xlsx)', format: 'xlsx'});
-    }
-    if (this._enableDownloadCSV) {
-      menuItems.push({label: 'Download as CSV', format: 'csv'});
-    }
-
-    // Create menu items
-    menuItems.forEach(item => {
-      const menuItem = document.createElement('div');
-      menuItem.className = 'jp-TabularDataViewer-downloadMenuItem';
-      menuItem.textContent = item.label;
-      menuItem.addEventListener('click', () => {
-        this._downloadFilteredData(item.format);
-        downloadMenu.style.display = 'none';
-      });
-      downloadMenu.appendChild(menuItem);
-    });
-
-    // Toggle dropdown on button click
-    downloadButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      downloadMenu.style.display = downloadMenu.style.display === 'none' ? 'block' : 'none';
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', () => {
-      downloadMenu.style.display = 'none';
-    });
-
-    downloadContainer.appendChild(downloadButton);
-    downloadContainer.appendChild(downloadMenu);
-    this._statusRight.appendChild(downloadContainer);
 
     this._statusBar.appendChild(this._statusLeft);
     this._statusBar.appendChild(statusMiddle);
@@ -333,6 +269,16 @@ export class TabularDataViewer extends Widget {
     } catch (error) {
       this._showError(`Failed to refresh data: ${error}`);
     }
+  }
+
+  /**
+   * Show download modal dialog
+   */
+  public showDownloadModal(): void {
+    const modal = new DownloadModal(
+      (format: string) => this.downloadFilteredData(format)
+    );
+    modal.show();
   }
 
   /**
@@ -1164,7 +1110,7 @@ export class TabularDataViewer extends Widget {
    * Download filtered and sorted data
    * @param format - Download format: 'original', 'xlsx', or 'csv'
    */
-  private async _downloadFilteredData(format: string = 'original'): Promise<void> {
+  public async downloadFilteredData(format: string = 'original'): Promise<void> {
     try {
       // Build download URL with current filters and sorting
       const params = new URLSearchParams();

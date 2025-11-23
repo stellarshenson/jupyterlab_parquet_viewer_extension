@@ -502,3 +502,124 @@ export class FilterModal extends Widget {
     this.dispose();
   }
 }
+
+/**
+ * Modal dialog widget for selecting download format
+ */
+export class DownloadModal extends Widget {
+  private _onDownload: (format: string) => void;
+
+  constructor(onDownload: (format: string) => void) {
+    super();
+    this._onDownload = onDownload;
+    this.addClass('jp-FilterModal');
+    this._render();
+    this._setupEventListeners();
+  }
+
+  /**
+   * Render the modal content
+   */
+  private _render(): void {
+    const content = document.createElement('div');
+    content.className = 'jp-FilterModal-content';
+
+    // Header with title and close button
+    const header = document.createElement('div');
+    header.className = 'jp-FilterModal-header';
+    const title = document.createElement('h3');
+    title.textContent = 'Download Filtered Data';
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'jp-FilterModal-close';
+    closeBtn.textContent = '×';
+    closeBtn.onclick = () => this.close();
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+    content.appendChild(header);
+
+    // Format buttons
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'jp-FilterModal-buttons';
+
+    const originalBtn = this._createFormatButton(
+      'Download as Original Format',
+      'original'
+    );
+    buttonsDiv.appendChild(originalBtn);
+
+    const excelBtn = this._createFormatButton(
+      'Download as Excel (.xlsx)',
+      'xlsx'
+    );
+    buttonsDiv.appendChild(excelBtn);
+
+    const csvBtn = this._createFormatButton('Download as CSV', 'csv');
+    buttonsDiv.appendChild(csvBtn);
+
+    content.appendChild(buttonsDiv);
+
+    // Cancel button
+    const cancelDiv = document.createElement('div');
+    cancelDiv.className = 'jp-FilterModal-footer';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'jp-FilterModal-button';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = () => this.close();
+    cancelDiv.appendChild(cancelBtn);
+    content.appendChild(cancelDiv);
+
+    this.node.appendChild(content);
+  }
+
+  /**
+   * Create a format button
+   */
+  private _createFormatButton(label: string, format: string): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.className = 'jp-FilterModal-button';
+    btn.textContent = label;
+    btn.onclick = () => {
+      this._onDownload(format);
+      this.close();
+    };
+    return btn;
+  }
+
+  /**
+   * Setup event listeners for closing the modal
+   */
+  private _setupEventListeners(): void {
+    // Close on ESC key
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        this.close();
+      }
+    };
+    document.addEventListener('keydown', handleKeydown);
+    this.disposed.connect(() => {
+      document.removeEventListener('keydown', handleKeydown);
+    });
+
+    // Close on backdrop click
+    this.node.addEventListener('click', (event: MouseEvent) => {
+      if (event.target === this.node) {
+        this.close();
+      }
+    });
+  }
+
+  /**
+   * Show the modal
+   */
+  show(): void {
+    Widget.attach(this, document.body);
+    this.node.focus();
+  }
+
+  /**
+   * Close and dispose the modal
+   */
+  close(): void {
+    this.dispose();
+  }
+}

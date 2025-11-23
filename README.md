@@ -28,6 +28,10 @@ View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Doubl
 
 ![Copy Row as JSON](.resources/screenshot-copy-json.png)
 
+**Download filtered data:** Right-click on the viewer to download filtered and sorted data in your choice of format - original, Excel, or CSV.
+
+![Download Filtered Data](.resources/screenshot-download-filtered.png)
+
 ## Features
 
 **Supported File Formats:**
@@ -62,6 +66,7 @@ View and browse Parquet, Excel, CSV, and TSV files directly in JupyterLab. Doubl
 **Additional features:**
 
 - Column statistics modal - View comprehensive statistics including data type, row counts, null values, unique counts, and type-specific metrics (numeric: min/max/mean/median/std dev/outliers; string: most common value/length stats; date: earliest/latest dates). Includes scrollable list of unique values sorted by frequency with counts and percentages. Copy statistics as JSON with one click
+- Download filtered data - Right-click on viewer to download data with current filters and sorting applied. Choose between original format, Excel (.xlsx), or CSV. Downloads preserve all active filters, sort order, and selected rows
 - Right-click context menu on rows to copy data as JSON
 - Refresh view - Right-click on viewer and select "Refresh View" to reload data from file while preserving scroll position, filters, and sorting
 - Cell text truncation - Configurable maximum character limit for cell display (default: 100 characters). Text longer than limit shows "..." ellipsis. Set to 0 for unlimited display

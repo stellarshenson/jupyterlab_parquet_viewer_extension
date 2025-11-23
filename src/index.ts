@@ -50,10 +50,7 @@ class TabularDataWidgetFactory extends ABCWidgetFactory<
       context.path,
       this._setLastContextMenuRow,
       settings.maxCellCharacters,
-      settings.maxUniqueValues,
-      settings.enableDownloadOriginal,
-      settings.enableDownloadExcel,
-      settings.enableDownloadCSV
+      settings.maxUniqueValues
     );
     const widget = new TabularDataDocument({ content, context });
     widget.title.label = context.path.split('/').pop() || 'Tabular Data File';
@@ -81,9 +78,6 @@ interface ISettings {
   enableTSV: boolean;
   maxCellCharacters: number;
   maxUniqueValues: number;
-  enableDownloadOriginal: boolean;
-  enableDownloadExcel: boolean;
-  enableDownloadCSV: boolean;
 }
 
 /**
@@ -113,10 +107,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       enableCSV: true,
       enableTSV: true,
       maxCellCharacters: 100,
-      maxUniqueValues: 100,
-      enableDownloadOriginal: true,
-      enableDownloadExcel: true,
-      enableDownloadCSV: true
+      maxUniqueValues: 100
     };
 
     // console.log('[Tabular Data Viewer] Default settings:', settings);
@@ -167,6 +158,21 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
     });
 
+    // Download command
+    const downloadCommand = 'tabular-data-viewer:download';
+    commands.addCommand(downloadCommand, {
+      label: 'Download Filtered Data',
+      caption: 'Download filtered and sorted data in various formats',
+      isEnabled: () => {
+        return activeWidget !== null;
+      },
+      execute: async () => {
+        if (activeWidget) {
+          activeWidget.showDownloadModal();
+        }
+      }
+    });
+
     // Note: Refresh View context menu item is provided by jupyterlab_refresh_view extension
     // Our widget responds to it automatically via the context.fileChanged signal connection
 
@@ -175,6 +181,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
       command: copyRowCommand,
       selector: '.jp-TabularDataViewer-row',
       rank: 10
+    });
+
+    // Add download command to context menu for viewer area
+    contextMenu.addItem({
+      command: downloadCommand,
+      selector: '.jp-TabularDataViewer',
+      rank: 100
     });
 
     // Register file types based on settings
